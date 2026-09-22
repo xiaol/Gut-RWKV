@@ -1,8 +1,9 @@
 # GitHub publication
 
-**Gut-RWKV** is published at `https://github.com/xiaol/Gut-RWKV` on the public
-`main` branch. The repository contains a standalone install, tests, CI, browser
-demo, reproducible training commands and public result summaries. The initial
+**Gut-RWKV** is published at `https://github.com/xiaol/Gut-RWKV-Jev` on the
+public `main` branch (GitHub redirects the former `Gut-RWKV` URL). The repository
+contains a standalone install, tests, CI, browser demo, reproducible training
+commands and public result summaries. The initial
 published commit is `1f6028a` (`Introduce Gut-RWKV state-tuned decision model`). Base
 weights, adapters, training data, `.venv`, local tools and `runs/` remain ignored.
 
