@@ -19,6 +19,10 @@ leaderboard can change; re-check it before publication.
 The 68.8% result is from a 48-question development sample selected from three
 training sources. It is useful for debugging, not a SOTA claim.
 
+The first complete decision-v7 state-tuning run is lower: **44.3% accuracy on
+1,468 held-out development questions** (NLL 1.5599, Brier 0.7387, ECE 0.1876).
+This confirms that the small pilot does not predict full-development quality.
+
 ## What SOTA requires
 
 1. **Lock the protocol.** Use JevBench's current commit, full public/held-out

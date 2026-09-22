@@ -15,6 +15,8 @@ development sample and **38/72 (52.8%)** on JevBench's original public subset.
 It is uncalibrated and is not a general-purpose release. See
 [EXPERIMENTS.md](EXPERIMENTS.md), [RESEARCH.md](RESEARCH.md) and [SOTA.md](SOTA.md)
 for comparisons, prior work and the path toward a competitive benchmark result.
+The subsequent full decision-v7 state-tuning run scores **44.3%** on 1,468 held-out
+development questions; neither result is an official JevBench rank.
 
 ## Architecture
 

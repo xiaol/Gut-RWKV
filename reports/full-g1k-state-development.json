@@ -1,0 +1,35 @@
+{
+  "base": "rwkv-g1k-3b-temp-5441.pth",
+  "adaptation": "initial WKV state + decision head",
+  "epochs": 2,
+  "steps": 31152,
+  "development_questions": 1468,
+  "accuracy": 0.4427792915531335,
+  "nll": 1.5599448865059362,
+  "brier": 0.7387029793522006,
+  "ece_10_bins": 0.1876201551300994,
+  "by_type": {
+    "choice": {
+      "questions": 756,
+      "accuracy": 0.3994708994708995,
+      "nll": 1.5987708477925884,
+      "brier": 0.7379718068880682,
+      "ece_10_bins": 0.13426733490513273
+    },
+    "noul": {
+      "questions": 472,
+      "accuracy": 0.614406779661017,
+      "nll": 1.4759804804800074,
+      "brier": 0.7085995559774718,
+      "ece_10_bins": 0.3481975620833494
+    },
+    "score": {
+      "questions": 240,
+      "accuracy": 0.24166666666666667,
+      "nll": 1.6027731069706403,
+      "brier": 0.8002095719178518,
+      "ece_10_bins": 0.07372135867675145
+    }
+  },
+  "interpretation": "Full development run; not a JevBench leaderboard result."
+}

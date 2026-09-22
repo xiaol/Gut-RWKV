@@ -27,6 +27,22 @@ Reports: [LoRA 0.4B](reports/lora-0.4b-development.json),
 [state 0.4B](reports/state-0.4b-development.json),
 [state G1k 3B](reports/state-g1k-3b-development.json).
 
+## Full decision-v7 development run
+
+The same G1k state-tuning configuration was then trained for two epochs on the
+complete 15,576-question training file (31,152 optimizer steps), with the
+untouched 1,468-question development file evaluated once training finished.
+Accuracy was **650/1,468 = 44.3%**, with NLL **1.5599**, Brier **0.7387** and
+10-bin ECE **0.1876**. By type, accuracy was Choice **39.9%** (756), Noul
+**61.4%** (472), and Score **24.2%** (240). This is lower than the 68.8% pilot
+on its deliberately small 48-question sample, so the pilot must not be treated
+as representative. The full-run report is
+[full-g1k-state-development.json](reports/full-g1k-state-development.json).
+
+This result remains a development measurement, not a JevBench rank: no official
+534-decision evaluation or matched head-only/LoRA control was run for this
+checkpoint.
+
 State tuning updates only initial WKV matrices and the decision head, not base
 weights or time-shift vectors. G1k's trainable WKV tensor is `[32,1,40,64,64]`;
 its norm after training is 5.8772, confirming a nonzero learned initialization.
