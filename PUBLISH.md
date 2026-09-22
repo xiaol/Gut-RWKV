@@ -1,23 +1,18 @@
 # GitHub publication
 
-The repository is prepared locally as **Gut-RWKV**, with a standalone install,
-tests, CI, browser demo, reproducible training commands and public result summaries.
-It has not been published: the environment has no authenticated GitHub API
-credential or GitHub CLI session. Existing checkouts point at `xiaol`, but the
-intended owner has not been confirmed. No credentials should be committed.
+**Gut-RWKV** is published at `https://github.com/xiaol/Gut-RWKV` on the public
+`main` branch. The repository contains a standalone install, tests, CI, browser
+demo, reproducible training commands and public result summaries. The published
+commit is `1f6028a` (`Introduce Gut-RWKV state-tuned decision model`). Base
+weights, adapters, training data, `.venv`, local tools and `runs/` remain ignored.
 
-After signing in to GitHub CLI on this machine and choosing the owner:
+For a future update, use the existing `origin` remote and push with:
 
 ```bash
-gh auth login
-gh auth status
-git add .github .gitignore README.md RESEARCH.md RESULTS.md EXPERIMENTS.md SOTA.md \
-  THIRD_PARTY.md PUBLISH.md pyproject.toml examples reports rwkv_jev scripts tests
+git add .
 git diff --cached --check
-git diff --cached --stat
-git commit -m "Introduce Gut-RWKV state-tuned decision model and reproducible pilots"
-gh repo create OWNER/Gut-RWKV --public --source=. --remote=origin \
-  --description "Typed decisions from RWKV recurrent memory: state tuning, batched branches, and reproducible evaluations" --push
+git commit -m "Describe public Gut-RWKV repository"
+env -u LD_LIBRARY_PATH -u LD_PRELOAD /usr/bin/git push origin main
 ```
 
 Set the appropriate Git author identity before committing. Base weights, adapters,
