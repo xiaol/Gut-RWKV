@@ -1,0 +1,31 @@
+{
+  "upstream": "jaredpalmer/kev-suites/v7/decision-v7",
+  "seed": 42,
+  "sources": [
+    "agnews",
+    "boolq",
+    "sst5"
+  ],
+  "files": {
+    "train": {
+      "upstream_sha256": "7ed5254b5cb5291baefaceb09edf7e13110258211518c8038f4a12c11bd628ad",
+      "source_counts": {
+        "agnews": 64,
+        "boolq": 64,
+        "sst5": 64
+      },
+      "sha256": "dd9ee4616b3dbc96a5e8a44a3a8dd2b8daeb01102553730a317f8b407c98d2ac",
+      "questions": 192
+    },
+    "development": {
+      "upstream_sha256": "8d5765d7aec4d08c61854f4664ca79ec2ba44ed092e9b967eaf61ed86c496d9c",
+      "source_counts": {
+        "sst5": 16,
+        "boolq": 16,
+        "agnews": 16
+      },
+      "sha256": "2c19ce633d146e500d32efcf2b090cfcb2214f6b827e0856cbdfd04c597b8eca",
+      "questions": 48
+    }
+  }
+}

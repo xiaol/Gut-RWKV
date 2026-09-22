@@ -1,0 +1,62 @@
+{
+  "suite": "JevBench original-public, 72 decisions; not the full 534-decision leaderboard",
+  "jevbench_commit": "bb83e5da8bbb040aa772bcfe4c6275408dbeb831",
+  "dataset_hash": "914276022fa5f0ea70e4231f2af98e68c67b274b61bea8c440b33890401cd2f9",
+  "correct": 38,
+  "total": 72,
+  "accuracy": 0.5277777777777778,
+  "valid": 72,
+  "schema_validity_strict": 1,
+  "brier": 0.5454501675923126,
+  "ece": 0.11650841082963681,
+  "latency": {
+    "n": 72,
+    "p50_s": 0.3624862194992602,
+    "p95_s": 0.3663324773311615
+  },
+  "ordinal_mae": 0.8373708833629886,
+  "price_per_1000_decisions_usd": null,
+  "cost_basis": [
+    "self_hosted_local_gpu"
+  ],
+  "paraphrase_consistency": {
+    "agree": 23,
+    "agreement": 0.6388888888888888,
+    "both_correct_rate_all_pairs": 0.4166666666666667,
+    "both_valid": 36,
+    "pairs": 36
+  },
+  "per_family": {
+    "adequacy": {
+      "correct": 4,
+      "total": 12,
+      "accuracy": 0.3333333333333333
+    },
+    "extraction": {
+      "correct": 9,
+      "total": 12,
+      "accuracy": 0.75
+    },
+    "intent": {
+      "correct": 4,
+      "total": 12,
+      "accuracy": 0.3333333333333333
+    },
+    "ordinal": {
+      "correct": 8,
+      "total": 12,
+      "accuracy": 0.6666666666666666
+    },
+    "policy": {
+      "correct": 6,
+      "total": 12,
+      "accuracy": 0.5
+    },
+    "routing": {
+      "correct": 7,
+      "total": 12,
+      "accuracy": 0.5833333333333334
+    }
+  },
+  "deployment": "Local HTTP on NVIDIA A100-PCIE-40GB; bf16 G1k 3B state-plus-head; serial requests; not hosted endpoint latency"
+}

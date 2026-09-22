@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gut-rwkv"
+version = "0.1.0"
+description = "Trainable typed decisions on an RWKV-7 backbone"
+requires-python = ">=3.10"
+dependencies = ["torch>=2.4"]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[project.scripts]
+gut-rwkv = "rwkv_jev.cli:main"
+rwkv-jev = "rwkv_jev.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["rwkv_jev*"]
+
+[tool.setuptools.package-data]
+"rwkv_jev" = ["web/*.html"]
+"rwkv_jev.backbone" = ["cuda/*.cpp", "cuda/*.cu", "LICENSE"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

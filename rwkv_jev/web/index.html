@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gut-RWKV · Typed decisions</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#101714;color:#e6f1e9;font:16px/1.5 system-ui,sans-serif}main{max-width:1120px;margin:56px auto;padding:0 24px}header{border-bottom:1px solid #34463b;padding-bottom:24px;margin-bottom:30px}h1{font-size:48px;letter-spacing:-2px;margin:8px 0}h2{font-size:19px}.label{color:#a2d9ac;font-size:12px;text-transform:uppercase;letter-spacing:2px}.muted{color:#a2b4a7}section.grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}textarea{width:100%;border:1px solid #3a5142;border-radius:8px;padding:16px;background:#17211b;color:inherit;resize:vertical;font:14px/1.5 ui-monospace,monospace}button{background:#b9edbf;color:#142219;border:0;border-radius:7px;padding:12px 22px;font-weight:700;cursor:pointer;margin:16px 0}button:disabled{opacity:.5;cursor:wait}.card{border:1px solid #34463b;border-radius:8px;padding:16px;margin-bottom:12px}.row{display:flex;justify-content:space-between;gap:10px;margin-top:9px}.bar{height:5px;background:#34463b;margin-top:5px}.fill{height:100%;background:#b9edbf}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}#status{margin-left:12px;color:#b8cbbd}#error{color:#ffb8a6}@media(max-width:760px){section.grid{grid-template-columns:1fr}main{margin-top:28px}h1{font-size:38px}}
+</style>
+<main>
+<header><div class="label">Recurrent memory · Direct decisions</div><h1>Gut-RWKV</h1><p class="muted">Give it context. Ask bounded questions. Get probabilities you can use.</p></header>
+<p class="muted">Research prototype. The loaded pilot is uncalibrated; results are demonstrations, not validated guidance.</p>
+<section class="grid"><div>
+<h2><label for="state">Context</label></h2>
+<textarea id="state" rows="4">I was charged twice. Please refund the extra payment.</textarea>
+<h2><label for="questions">Questions</label></h2>
+<textarea id="questions" rows="19">{
+  "team": {
+    "type": "choice",
+    "instructions": "Which team should handle this request?",
+    "criteria": {
+      "billing": "Payments and refunds",
+      "technical": "Software bugs",
+      "sales": "New purchases"
+    }
+  },
+  "refund": {
+    "type": "noul",
+    "instructions": "Does the customer request a refund?"
+  }
+}</textarea>
+<button id="run">Make decisions</button><span id="status" role="status"></span><p id="error" role="alert"></p>
+</div><div><h2>Decisions</h2><div id="results"><p class="muted">Results appear here.</p></div><details><summary>Response JSON</summary><pre id="raw"></pre></details></div></section>
+<footer class="muted">Choice · Score · Noul &nbsp; / &nbsp; No answer-token generation</footer>
+</main>
+<script>
+const runButton=document.querySelector('#run');
+runButton.addEventListener('click',async()=>{
+  const status=document.querySelector('#status'),error=document.querySelector('#error');
+  error.textContent='';runButton.disabled=true;status.textContent='Evaluating…';
+  const started=performance.now();
+  try{
+    const questions=JSON.parse(document.querySelector('#questions').value);
+    const response=await fetch('/v1/systemone',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({state:document.querySelector('#state').value,questions})});
+    const result=await response.json();if(!response.ok)throw new Error(result.error||'Request failed');
+    const container=document.querySelector('#results');container.replaceChildren();
+    for(const [name,answer] of Object.entries(result.answers)){
+      const card=document.createElement('div');card.className='card';
+      const title=document.createElement('strong');title.textContent=name;card.append(title);
+      const value=document.createElement('p');value.textContent=answer.type==='choice'?answer.choice:answer.type==='score'?`Score: ${answer.score.toFixed(3)}`:`P(true): ${(answer.noul*100).toFixed(1)}%`;card.append(value);
+      const probabilities=answer.probabilities||{'true':answer.noul,'false':1-answer.noul};
+      for(const [label,probability] of Object.entries(probabilities)){
+        const row=document.createElement('div');row.className='row';
+        const labelElement=document.createElement('span');labelElement.textContent=label;
+        const number=document.createElement('span');number.textContent=`${(probability*100).toFixed(1)}%`;row.append(labelElement,number);
+        const bar=document.createElement('div');bar.className='bar';const fill=document.createElement('div');fill.className='fill';fill.style.width=`${probability*100}%`;bar.append(fill);card.append(row,bar);
+      }
+      container.append(card);
+    }
+    document.querySelector('#raw').textContent=JSON.stringify(result,null,2);
+    status.textContent=`${Math.round(performance.now()-started)} ms · ${Object.keys(result.answers).length} decisions`;
+  }catch(failure){error.textContent=failure.message;status.textContent='';}
+  finally{runButton.disabled=false;}
+});
+</script>
+</html>

@@ -1,0 +1,86 @@
+{
+  "device": "NVIDIA A100-PCIE-40GB",
+  "dtype": "bfloat16",
+  "adapter_sha256": "70d3ca29192c2c9830b1ec1922e763e27e8f42e409406114d7c92293ef4fc3b3",
+  "state_bytes_per_branch": 6389760,
+  "candidate_batch": 16,
+  "workload": "Repeated identical three-option questions; warm model; no cross-request cache",
+  "scope": "Within-request branch batching, not concurrent client serving",
+  "results": [
+    {
+      "questions": 1,
+      "max_probability_difference": 0,
+      "timings": {
+        "serial_shared_prefix": {
+          "milliseconds": [
+            245.96902914345264,
+            244.8289291933179,
+            250.01133559271693
+          ],
+          "median_ms": 245.96902914345264,
+          "decisions_per_second": 4.065552494484115
+        },
+        "batched_shared_prefix": {
+          "milliseconds": [
+            252.41419905796647,
+            251.8556686118245,
+            251.65187800303102
+          ],
+          "median_ms": 251.8556686118245,
+          "decisions_per_second": 3.9705280628059305
+        }
+      },
+      "speedup": 0.9766269327952085
+    },
+    {
+      "questions": 8,
+      "max_probability_difference": 0.012435942888259888,
+      "timings": {
+        "serial_shared_prefix": {
+          "milliseconds": [
+            1421.412965748459,
+            1428.2370209693909,
+            1420.9436159580946
+          ],
+          "median_ms": 1421.412965748459,
+          "decisions_per_second": 5.628202494823537
+        },
+        "batched_shared_prefix": {
+          "milliseconds": [
+            340.31757712364197,
+            338.462783023715,
+            339.8446021601558
+          ],
+          "median_ms": 339.8446021601558,
+          "decisions_per_second": 23.54017085794379
+        }
+      },
+      "speedup": 4.182538009176916
+    },
+    {
+      "questions": 32,
+      "max_probability_difference": 0.008326888084411621,
+      "timings": {
+        "serial_shared_prefix": {
+          "milliseconds": [
+            5593.399533070624,
+            5517.826308030635,
+            5469.072768930346
+          ],
+          "median_ms": 5517.826308030635,
+          "decisions_per_second": 5.799385158867225
+        },
+        "batched_shared_prefix": {
+          "milliseconds": [
+            766.2243070080876,
+            765.3332077898085,
+            765.1254390366375
+          ],
+          "median_ms": 765.3332077898085,
+          "decisions_per_second": 41.811853548616035
+        }
+      },
+      "speedup": 7.209704546814926
+    }
+  ]
+}

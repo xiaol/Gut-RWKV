@@ -1,0 +1,12 @@
+{
+  "state": "I was charged twice. Please refund the extra payment.",
+  "questions": {
+    "team": {
+      "type": "choice",
+      "instructions": "Which team should handle this request?",
+      "criteria": {"billing": "Payments and refunds", "technical": "Software bugs", "sales": "New purchases"}
+    },
+    "refund": {"type": "noul", "instructions": "Does the customer request a refund?"},
+    "urgency": {"type": "score", "instructions": "Rate urgency", "criteria": ["Routine", "Urgent", "Emergency"]}
+  }
+}
