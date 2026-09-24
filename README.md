@@ -32,6 +32,20 @@ comparison is useful for reproducibility, but it is not a full 534-task JevBench
 submission or an SOTA claim. Results and limitations are tracked in
 [EXPERIMENTS.md](EXPERIMENTS.md), [AUDIT.md](AUDIT.md) and [SOTA.md](SOTA.md).
 
+## Training curves and benchmark
+
+![Gut-RWKV training and RL objective curves](reports/learning-curves.svg)
+
+The curves show the logged objective for cross-entropy, pathwise RL, REINFORCE,
+proper-score and noisy proper-score runs. The public benchmark comparison is
+**149/231 (64.5%)** for lower-LR cross-entropy versus **143/231 (61.9%)** for
+pathwise RL; both produce valid typed answers on all 231 public tasks. Objective
+losses have different scales, so benchmark accuracy—not a lower raw RL loss—is
+the selection criterion. The underlying points and extraction command are in
+[LEARNING_CURVES.md](LEARNING_CURVES.md) and
+[reports/learning-curves.json](reports/learning-curves.json).
+Regenerate the checked-in SVG with `python scripts/plot_learning_curves.py`.
+
 ## What is distinctive
 
 - **State tuning:** learns initial RWKV WKV state matrices and a typed decision
