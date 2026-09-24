@@ -25,6 +25,7 @@ cache.
 | Lower-LR cross-entropy | **149/231 (64.5%)** | All currently public JevBench tasks; 231/231 valid |
 | Pathwise typed reward | **143/231 (61.9%)** | Same public tasks; 231/231 valid |
 | Lower-LR development baseline | **68.39% ± 0.45** | Three seeds on the reused development set |
+| Warm-start categorical RL-v2 | **69.01%** | One seed; 1,013/1,468 development questions |
 | Official JevBench rank | **Unranked** | 303 organizer-held tasks are not public |
 
 The lower-LR cross-entropy run is the current external baseline. The public
@@ -64,15 +65,18 @@ parity; the current evidence favors the simpler lower-LR cross-entropy baseline.
 ## Research status
 
 The project is a reproducible research prototype rather than a general-purpose
-release. Development screens include proper scoring, pathwise rewards and
-Gaussian REINFORCE, with learning curves and three-seed state-LR replication. See
+release. Development screens include proper scoring, Gaussian policy estimators
+and the new warm-start categorical RL-v2 objective, with learning curves and
+three-seed state-LR replication. RL-v2 reaches **69.01%** on one development
+seed; it has not yet been evaluated on public JevBench. See
 [STATE_SCREEN.md](STATE_SCREEN.md), [POLICY_SCREEN.md](POLICY_SCREEN.md) and
-[LEARNING_CURVES.md](LEARNING_CURVES.md) for protocols and raw summaries.
+[the RL-v2 report](reports/categorical-rl-v2-seed42.json) for protocols and
+summaries.
 
 ## Roadmap
 
-1. Warm-start pathwise training from the cross-entropy adapter with a KL penalty.
-2. Ablate reward terms and policy-sample counts under a fixed evaluation split.
+1. Replicate categorical RL-v2 across seeds with a reserved evaluation split.
+2. Ablate typed rewards, KL strength and policy-sample counts.
 3. Add a reserved calibration/source-family split before tuning benchmark settings.
 4. Test a permutation-equivariant or pairwise candidate head.
 5. Submit the locked adapter to the complete JevBench evaluation.
@@ -186,6 +190,35 @@ The default objective remains `cross-entropy`.
 `--policy-samples 32` paired perturbations, stable log probabilities and RPS only
 for Score questions. They are independent implementations, not Laya recipe parity.
 See [POLICY_SCREEN.md](POLICY_SCREEN.md) for the estimator and matched protocol.
+
+### Warm-start categorical RL (experimental)
+
+For a more faithful policy objective, first train a state-tuned cross-entropy
+adapter, then warm-start a short categorical policy-gradient phase from it:
+
+```bash
+.venv/bin/gut-rwkv train \
+  --base "$BASE" --vocab "$VOCAB" --data train.jsonl \
+  --adapter runs/state-ce/adapter.pt --state-tuning \
+  --epochs 1 --max-steps 1536 --checkpoint-every 384 \
+  --lr 1e-4 --state-lr 1e-5 --seed 42
+
+.venv/bin/gut-rwkv train \
+  --base "$BASE" --vocab "$VOCAB" --data train.jsonl \
+  --adapter runs/state-rl-v2/adapter.pt \
+  --init-adapter runs/state-ce/adapter.pt --state-tuning \
+  --epochs 1 --max-steps 512 --checkpoint-every 128 \
+  --lr 2e-5 --state-lr 2e-6 --seed 42 \
+  --objective categorical-rl --policy-samples 32 \
+  --kl-coef 0.05 --entropy-coef 0.01 --score-ordinal-weight 0.1
+```
+
+`categorical-rl` samples typed answers directly, uses exact correctness rewards,
+adds a small normalized ordinal reward for Score, and anchors the policy to the
+cross-entropy adapter with KL. Run seeds 42/43/44 and select against a reserved
+validation/calibration split before using JevBench. This recipe is implemented
+but has not yet produced a full public benchmark result; the current public
+baseline remains lower-LR cross-entropy.
 
 Training uses complete context/question/candidate sequences: the fused kernel
 differentiates its initial state input but not its returned final state.

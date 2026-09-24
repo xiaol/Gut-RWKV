@@ -112,14 +112,61 @@ def gaussian_policy_loss(logits, target, question_kind, estimator="reinforce", e
     return -(advantages * log_density).mean(), rewards.detach().mean()
 
 
+def categorical_reward_vector(logits, target, question_kind, score_ordinal_weight=0.0):
+    if logits.ndim != 1 or question_kind not in ("choice", "noul", "score"):
+        raise ValueError("Categorical policy requires one logit vector and a valid question kind")
+    if not 0 <= target < logits.numel():
+        raise ValueError("Target is outside the candidate distribution")
+    if not math.isfinite(score_ordinal_weight) or not 0 <= score_ordinal_weight <= 1:
+        raise ValueError("Score ordinal weight must be finite and in [0, 1]")
+    labels = torch.arange(logits.numel(), device=logits.device)
+    exact = (labels == target).to(logits.dtype)
+    if question_kind != "score" or score_ordinal_weight == 0:
+        return exact
+    denominator = max(logits.numel() - 1, 1)
+    ordinal = 1 - (labels - target).abs().to(logits.dtype) / denominator
+    return (1 - score_ordinal_weight) * exact + score_ordinal_weight * ordinal
+
+
+def categorical_policy_loss(logits, target, question_kind, policy_samples=32,
+                            reference_logits=None, kl_coef=0.0, entropy_coef=0.0,
+                            score_ordinal_weight=0.0):
+    if logits.ndim != 1 or question_kind not in ("choice", "noul", "score"):
+        raise ValueError("Categorical policy requires one logit vector and a valid question kind")
+    if not isinstance(policy_samples, int) or policy_samples < 2:
+        raise ValueError("Policy samples must be an integer of at least two")
+    if not math.isfinite(kl_coef) or kl_coef < 0 or not math.isfinite(entropy_coef) or entropy_coef < 0:
+        raise ValueError("KL and entropy coefficients must be finite and nonnegative")
+    if reference_logits is not None and (reference_logits.ndim != 1 or reference_logits.shape != logits.shape):
+        raise ValueError("Reference logits must match the policy logits")
+    policy = torch.distributions.Categorical(logits=logits.float())
+    rewards_by_action = categorical_reward_vector(logits.float(), target, question_kind, score_ordinal_weight)
+    actions = policy.sample((policy_samples,))
+    rewards = rewards_by_action[actions]
+    baseline = (policy.probs * rewards_by_action).sum().detach()
+    loss = -((rewards - baseline) * policy.log_prob(actions)).mean()
+    if reference_logits is not None and kl_coef:
+        reference = torch.distributions.Categorical(logits=reference_logits.float())
+        kl = (policy.probs * (policy.logits - reference.logits)).sum()
+        loss = loss + kl_coef * kl
+    if entropy_coef:
+        loss = loss - entropy_coef * policy.entropy()
+    return loss, rewards.detach().mean()
+
+
 def objective_loss(logits, target, objective="cross-entropy", exploration_std=0.05,
                    spherical_weight=0.5, rps_weight=0.5, baseline=None, question_kind=None,
-                   policy_samples=32):
+                   policy_samples=32, reference_logits=None, kl_coef=0.0,
+                   entropy_coef=0.0, score_ordinal_weight=0.0):
     if objective == "cross-entropy":
         return functional.cross_entropy(logits[None], torch.tensor([target], device=logits.device)), None
     if objective in ("reinforce", "pathwise"):
         return gaussian_policy_loss(logits, target, question_kind, objective, exploration_std,
                                     policy_samples, spherical_weight, rps_weight)
+    if objective == "categorical-rl":
+        return categorical_policy_loss(logits, target, question_kind, policy_samples,
+                                       reference_logits, kl_coef, entropy_coef,
+                                       score_ordinal_weight)
     if objective not in ("proper-score", "rlcd"):
         raise ValueError("Unknown training objective")
     if objective == "rlcd":
@@ -135,7 +182,8 @@ def objective_loss(logits, target, objective="cross-entropy", exploration_std=0.
 def train(model, records, epochs, learning_rate, seed, max_steps=0, checkpoint_every=0, checkpoint_callback=None,
           state_learning_rate=None, state_max_norm=None, sampling="natural", sources=None,
           objective="cross-entropy", exploration_std=0.05, spherical_weight=0.5, rps_weight=0.5,
-          baseline_decay=0.95, policy_samples=32):
+          baseline_decay=0.95, policy_samples=32, reference_model=None, kl_coef=0.0,
+          entropy_coef=0.0, score_ordinal_weight=0.0):
     if epochs < 1 or not math.isfinite(learning_rate) or learning_rate <= 0 or max_steps < 0:
         raise ValueError("Invalid training settings")
     if checkpoint_every < 0 or (checkpoint_every and checkpoint_callback is None):
@@ -145,14 +193,20 @@ def train(model, records, epochs, learning_rate, seed, max_steps=0, checkpoint_e
     for value in (state_learning_rate, state_max_norm):
         if value is not None and (not math.isfinite(value) or value <= 0 or model.initial_wkv is None):
             raise ValueError("State controls require state tuning and finite positive values")
-    if objective not in ("cross-entropy", "proper-score", "rlcd", "reinforce", "pathwise"):
+    if objective not in ("cross-entropy", "proper-score", "rlcd", "reinforce", "pathwise", "categorical-rl"):
         raise ValueError("Unknown training objective")
     if objective in ("rlcd", "reinforce", "pathwise") and (not math.isfinite(exploration_std) or exploration_std <= 0):
         raise ValueError("Policy exploration standard deviation must be finite and positive")
-    if not isinstance(policy_samples, int) or policy_samples < 2 or policy_samples % 2:
+    if objective in ("reinforce", "pathwise") and (not isinstance(policy_samples, int) or policy_samples < 2 or policy_samples % 2):
         raise ValueError("Policy samples must be an even integer of at least two")
+    if objective == "categorical-rl" and (not isinstance(policy_samples, int) or policy_samples < 2):
+        raise ValueError("Categorical policy samples must be an integer of at least two")
     if not math.isfinite(baseline_decay) or not 0 <= baseline_decay < 1:
         raise ValueError("Baseline decay must be finite and in [0, 1)")
+    if reference_model is not None:
+        reference_model.eval()
+        for parameter in reference_model.parameters():
+            parameter.requires_grad_(False)
     generator = random.Random(seed)
     parameters = [parameter for parameter in model.parameters() if parameter.requires_grad]
     if state_learning_rate is None:
@@ -170,9 +224,14 @@ def train(model, records, epochs, learning_rate, seed, max_steps=0, checkpoint_e
             state, question, target = records[index]
             optimizer.zero_grad(set_to_none=True)
             logits = model.logits(state, question)
+            reference_logits = None
+            if objective == "categorical-rl" and reference_model is not None:
+                with torch.no_grad():
+                    reference_logits = reference_model.logits(state, question)
             loss, reward = objective_loss(logits, target, objective, exploration_std,
                                           spherical_weight, rps_weight, reward_baseline,
-                                          question.kind, policy_samples)
+                                          question.kind, policy_samples, reference_logits,
+                                          kl_coef, entropy_coef, score_ordinal_weight)
             if not torch.isfinite(loss):
                 raise RuntimeError("Nonfinite training loss")
             loss.backward()
@@ -262,8 +321,9 @@ def main():
     parser.add_argument("--state-max-norm", type=float, help="Project initial WKV to this global Frobenius norm after each update")
     parser.add_argument("--sampling", choices=("natural", "noul-balanced"), default="natural",
                         help="Balance Noul labels within each source, preserving source/type positions")
-    parser.add_argument("--objective", choices=("cross-entropy", "proper-score", "rlcd", "reinforce", "pathwise"), default="cross-entropy",
-                        help="reinforce/pathwise compare Gaussian policy gradients; rlcd is the legacy noisy objective")
+    parser.add_argument("--objective", choices=("cross-entropy", "proper-score", "rlcd", "reinforce", "pathwise", "categorical-rl"), default="cross-entropy",
+                        help="categorical-rl uses typed sampled answers and a reference-policy KL anchor; other RL objectives are legacy screens")
+    parser.add_argument("--init-adapter", help="Warm-start trainable state/head weights from an existing adapter")
     parser.add_argument("--exploration-std", type=float, default=0.05,
                         help="Gaussian logit exploration standard deviation")
     parser.add_argument("--policy-samples", type=int, default=32,
@@ -274,6 +334,12 @@ def main():
                         help="Weight of the ranked probability proper-score reward")
     parser.add_argument("--baseline-decay", type=float, default=0.95,
                         help="EMA decay for centering logged proper-score rewards; does not change gradients")
+    parser.add_argument("--kl-coef", type=float, default=0.05,
+                        help="Reference-policy KL coefficient for categorical-rl")
+    parser.add_argument("--entropy-coef", type=float, default=0.01,
+                        help="Entropy bonus coefficient for categorical-rl")
+    parser.add_argument("--score-ordinal-weight", type=float, default=0.1,
+                        help="Weight of normalized ordinal reward mixed with exact Score reward")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8000)
@@ -282,6 +348,8 @@ def main():
         parser.error("--data is required for train/evaluate")
     if args.command == "predict" and not args.request:
         parser.error("--request is required for predict")
+    if args.init_adapter and args.command != "train":
+        parser.error("--init-adapter requires train")
     if args.command == "train" and Path(args.adapter).exists():
         parser.error("Adapter already exists; choose a new output path")
     if args.state_tuning and args.rank:
@@ -296,11 +364,19 @@ def main():
         parser.error("--objective requires train")
     if args.objective in ("rlcd", "reinforce", "pathwise") and (not math.isfinite(args.exploration_std) or args.exploration_std <= 0):
         parser.error("Policy exploration standard deviation must be finite and positive")
-    if args.policy_samples < 2 or args.policy_samples % 2:
+    if args.objective in ("reinforce", "pathwise") and (args.policy_samples < 2 or args.policy_samples % 2):
         parser.error("Policy samples must be an even integer of at least two")
+    if args.objective == "categorical-rl" and args.policy_samples < 2:
+        parser.error("Categorical policy samples must be an integer of at least two")
     for value in (args.spherical_weight, args.rps_weight):
         if not math.isfinite(value) or value < 0:
             parser.error("Proper-score weights must be finite and nonnegative")
+    if not math.isfinite(args.kl_coef) or args.kl_coef < 0:
+        parser.error("KL coefficient must be finite and nonnegative")
+    if not math.isfinite(args.entropy_coef) or args.entropy_coef < 0:
+        parser.error("Entropy coefficient must be finite and nonnegative")
+    if not math.isfinite(args.score_ordinal_weight) or not 0 <= args.score_ordinal_weight <= 1:
+        parser.error("Score ordinal weight must be finite and in [0, 1]")
     if not math.isfinite(args.baseline_decay) or not 0 <= args.baseline_decay < 1:
         parser.error("Baseline decay must be finite and in [0, 1)")
     if args.checkpoint_every < 0 or (args.checkpoint_every and args.command != "train"):
@@ -325,6 +401,19 @@ def main():
             parser.error("Evaluation data is identical to training data; supply a held-out file")
     model = DecisionModel.from_base(args.base, args.vocab, device=args.device, dtype=getattr(torch, args.dtype), **settings)
     if args.command == "train":
+        reference_model = None
+        init_metadata = None
+        if args.init_adapter:
+            if not Path(args.init_adapter).is_file():
+                parser.error("--init-adapter must point to an existing adapter")
+            init_payload = torch.load(args.init_adapter, map_location="cpu", weights_only=True)
+            if init_payload.get("metadata", {}).get("base_sha256") != base_hash or \
+                    init_payload.get("metadata", {}).get("vocab_sha256") != vocab_hash:
+                parser.error("--init-adapter base weights/tokenizer do not match the training inputs")
+            init_metadata = model.load_adapter(args.init_adapter)
+            if args.objective == "categorical-rl":
+                reference_model = DecisionModel(model.backbone, model.tokenizer, **settings)
+                reference_model.load_adapter(args.init_adapter)
         sourced_records = read_data(args.data, with_sources=True)
         records = [row[:3] for row in sourced_records]
         sources = [row[3] for row in sourced_records]
@@ -339,7 +428,12 @@ def main():
                     "objective": args.objective, "exploration_std": args.exploration_std,
                     "spherical_weight": args.spherical_weight, "rps_weight": args.rps_weight,
                     "baseline_decay": args.baseline_decay, "policy_samples": args.policy_samples,
-                    "reward_definition": ("score-only-rps-stable-log" if args.objective in ("reinforce", "pathwise")
+                    "kl_coef": args.kl_coef, "entropy_coef": args.entropy_coef,
+                    "score_ordinal_weight": args.score_ordinal_weight,
+                    "init_adapter": str(Path(args.init_adapter).resolve()) if args.init_adapter else None,
+                    "init_adapter_metadata": init_metadata,
+                    "reward_definition": ("typed-categorical-exact-plus-score-ordinal" if args.objective == "categorical-rl"
+                                          else "score-only-rps-stable-log" if args.objective in ("reinforce", "pathwise")
                                           else "legacy"),
                     "training_cli_sha256": file_hash(__file__)}
 
@@ -350,7 +444,8 @@ def main():
         losses = train(model, records, args.epochs, args.lr, args.seed, args.max_steps,
                        args.checkpoint_every, save_checkpoint, args.state_lr, args.state_max_norm,
                        args.sampling, sources, args.objective, args.exploration_std,
-                       args.spherical_weight, args.rps_weight, args.baseline_decay, args.policy_samples)
+                       args.spherical_weight, args.rps_weight, args.baseline_decay, args.policy_samples,
+                       reference_model, args.kl_coef, args.entropy_coef, args.score_ordinal_weight)
         model.save_adapter(args.adapter, metadata)
         result = {"adapter": args.adapter, "steps": model.trained_steps, "final_training_loss": losses[-1]}
         if model.initial_wkv is not None:

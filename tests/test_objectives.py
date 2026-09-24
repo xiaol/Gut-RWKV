@@ -5,7 +5,8 @@ import torch
 
 from rwkv_jev import DecisionModel, Question
 from rwkv_jev.backbone.rwkv7 import Rwkv7ForCausalLM
-from rwkv_jev.cli import gaussian_policy_loss, objective_loss, proper_score_reward, train
+from rwkv_jev.cli import (categorical_policy_loss, categorical_reward_vector, gaussian_policy_loss,
+                          objective_loss, proper_score_reward, train)
 
 
 class ByteTokenizer:
@@ -39,6 +40,25 @@ def test_proper_score_rewards_correct_distribution_and_ordinal_order():
     loss, reward = objective_loss(torch.tensor([0.2, -0.1], requires_grad=True), 0, "proper-score")
     loss.backward()
     assert reward is not None and torch.isfinite(loss)
+
+
+def test_categorical_reward_is_exact_except_optional_score_ordinal_bonus():
+    logits = torch.zeros(4)
+    torch.testing.assert_close(categorical_reward_vector(logits, 2, "choice"), torch.tensor([0., 0., 1., 0.]))
+    reward = categorical_reward_vector(logits, 2, "score", score_ordinal_weight=0.2)
+    torch.testing.assert_close(reward, torch.tensor([1 / 15, 2 / 15, 1.0, 2 / 15]))
+
+
+def test_categorical_policy_has_finite_kl_anchored_gradient():
+    logits = torch.tensor([0.4, -0.3, 0.1], requires_grad=True)
+    reference = torch.tensor([0.2, -0.1, 0.0])
+    torch.manual_seed(37)
+    loss, reward = categorical_policy_loss(logits, 1, "choice", policy_samples=32,
+                                           reference_logits=reference, kl_coef=0.2,
+                                           entropy_coef=0.01)
+    gradient = torch.autograd.grad(loss, logits)[0]
+    assert torch.isfinite(loss) and torch.isfinite(reward)
+    assert torch.isfinite(gradient).all()
 
 
 def test_rlcd_objective_is_seeded_and_baseline_centered():
@@ -141,3 +161,14 @@ def test_policy_training_updates_state_and_uses_typed_reward(estimator):
         gaussian_policy_loss(logits, 0, "choice", estimator, policy_samples=3)
     with pytest.raises(ValueError, match="question kind"):
         gaussian_policy_loss(logits, 0, None, estimator)
+
+
+def test_categorical_policy_training_updates_state_with_reference():
+    model = make_model()
+    reference = make_model()
+    initial = model.initial_wkv.detach().clone()
+    records = [("red", Question.parse(QUESTION), 0)]
+    train(model, records, epochs=1, learning_rate=0.01, seed=12, objective="categorical-rl",
+          policy_samples=8, reference_model=reference, kl_coef=0.1, entropy_coef=0.01)
+    assert model.trained_steps == 1
+    assert not torch.equal(initial, model.initial_wkv)

@@ -1,0 +1,47 @@
+{
+  "protocol": "Warm-start categorical policy-gradient screen; seed 42; 512 RL updates after a 1536-update state-tuned cross-entropy adapter.",
+  "base": "rwkv-g1k-3b-temp-5441.pth",
+  "state_tuning": true,
+  "settings": {
+    "head_lr": 0.00002,
+    "state_lr": 0.000002,
+    "policy_samples": 32,
+    "kl_coef": 0.05,
+    "entropy_coef": 0.01,
+    "score_ordinal_weight": 0.1,
+    "gradient_clip_norm": 1.0,
+    "training_updates": 512,
+    "total_steps_in_output_adapter": 2048
+  },
+  "objective": "categorical-rl",
+  "reward": "Exact sampled typed-answer correctness, plus a 0.1 normalized ordinal bonus for Score questions.",
+  "reference": "Frozen lower-state-LR cross-entropy adapter; KL is current-policy to reference-policy.",
+  "results": {
+    "questions": 1468,
+    "correct": 1013,
+    "accuracy": 0.6900544959128065,
+    "nll": 1.4536223432267883,
+    "brier": 0.49999217848435773,
+    "ece_10_bins": 0.2103518519489658,
+    "cache_argmax_disagreements": 0,
+    "cache_max_probability_difference": 0.09966367483139038
+  },
+  "cross_entropy_reference": {
+    "correct": 997,
+    "accuracy": 0.6791553133514986,
+    "nll": 1.4523063285010365,
+    "brier": 0.5088781475171568,
+    "ece_10_bins": 0.20754826287624784
+  },
+  "artifacts": {
+    "adapter": "runs/categorical-rl-v2-seed42/adapter.pt",
+    "training_summary": "runs/categorical-rl-v2-seed42/train-summary.json",
+    "development_audit": "runs/categorical-rl-v2-seed42/development.json",
+    "adapter_sha256": "a02ce7b59574a598d7ff1c511d675124d6111edff69f5a585560f2e35bd240c7"
+  },
+  "limitations": [
+    "One seed and one reserved development file; no public JevBench run yet.",
+    "The development set has been used for prior screening and must not determine the final benchmark claim.",
+    "The network fetch for the external JevBench harness was unavailable in this run."
+  ]
+}
