@@ -1,11 +1,13 @@
 from types import SimpleNamespace
+from collections import Counter
+import random
 
 import pytest
 import torch
 from rwkv_jev.backbone.rwkv7 import Rwkv7ForCausalLM
 
 from rwkv_jev import DecisionModel, Question
-from rwkv_jev.cli import evaluate, train
+from rwkv_jev.cli import evaluate, objective_loss, proper_score_reward, train, training_order
 
 
 class ByteTokenizer:
@@ -74,6 +76,85 @@ def test_lora_training_freezes_base_and_adapter_roundtrip(tmp_path):
     assert restored.load_adapter(path) == {"test": True}
     assert restored.system_one("red", {"q": CHOICE}) == model.system_one("red", {"q": CHOICE})
     assert evaluate(model, records)["questions"] == 1
+
+
+def test_adaptation_modes_start_with_identical_head_and_predictions():
+    models = [make_model(), make_model(state_tuning=True), make_model(rank=2)]
+    with torch.no_grad():
+        for model in models[1:]:
+            for name, weight in models[0].head.state_dict().items():
+                torch.testing.assert_close(model.head.state_dict()[name], weight, rtol=0, atol=0)
+            torch.testing.assert_close(model.logits("red", Question.parse(CHOICE)),
+                                       models[0].logits("red", Question.parse(CHOICE)), rtol=0, atol=0)
+
+
+def test_checkpoint_schedule_preserves_training():
+    records = [("red", Question.parse(CHOICE), 0)] * 3
+    baseline = make_model(state_tuning=True)
+    observed = []
+    checkpointed = make_model(state_tuning=True)
+    train(baseline, records, epochs=2, learning_rate=0.01, seed=12, max_steps=5)
+    train(checkpointed, records, epochs=2, learning_rate=0.01, seed=12, max_steps=5,
+          checkpoint_every=2, checkpoint_callback=lambda model, epoch: observed.append((model.trained_steps, epoch)))
+    assert observed == [(2, 1), (3, 1), (4, 2), (5, 2)]
+    for name, weight in baseline.state_dict().items():
+        torch.testing.assert_close(checkpointed.state_dict()[name], weight, rtol=0, atol=0)
+
+
+def test_state_learning_rate_leaves_first_head_update_unchanged():
+    baseline = make_model(state_tuning=True)
+    constrained = make_model(state_tuning=True)
+    records = [("red", Question.parse(CHOICE), 0)]
+    train(baseline, records, epochs=1, learning_rate=0.01, seed=12)
+    train(constrained, records, epochs=1, learning_rate=0.01, seed=12, state_learning_rate=0.001)
+    for name, weight in baseline.head.state_dict().items():
+        torch.testing.assert_close(constrained.head.state_dict()[name], weight, rtol=0, atol=0)
+    torch.testing.assert_close(constrained.initial_wkv, baseline.initial_wkv * 0.1)
+
+
+def test_state_norm_projection_and_invalid_controls():
+    model = make_model(state_tuning=True)
+    observed = []
+    records = [("red", Question.parse(CHOICE), 0)]
+    train(model, records, epochs=3, learning_rate=0.01, seed=12, state_max_norm=0.001,
+          checkpoint_every=1, checkpoint_callback=lambda current, epoch: observed.append(float(current.initial_wkv.detach().norm())))
+    assert all(0 < norm <= 0.001001 for norm in observed)
+    with pytest.raises(ValueError, match="State controls"):
+        train(make_model(), records, epochs=1, learning_rate=0.01, seed=12, state_learning_rate=0.001)
+    with pytest.raises(ValueError, match="State controls"):
+        train(model, records, epochs=1, learning_rate=0.01, seed=12, state_max_norm=float("nan"))
+
+
+def test_balanced_sampling_preserves_sources_and_nonboolean_positions():
+    noul = Question.parse({"type": "noul", "instructions": "True?"})
+    choice = Question.parse(CHOICE)
+    records = [("text", noul, target) for target in [0] * 9 + [1] + [0] + [1] * 9]
+    records += [("text", choice, 0)] * 4
+    sources = ["first"] * 10 + ["second"] * 10 + ["choice"] * 4
+    natural = training_order(records, random.Random(42))
+    balanced = training_order(records, random.Random(42), "noul-balanced", sources)
+    assert balanced == training_order(records, random.Random(42), "noul-balanced", sources)
+    assert [sources[index] for index in balanced] == [sources[index] for index in natural]
+    for original, sampled in zip(natural, balanced):
+        if records[original][1].kind != "noul":
+            assert sampled == original
+    for length in range(1, len(balanced) + 1):
+        for source in ["first", "second"]:
+            counts = Counter(records[index][2] for index in balanced[:length] if sources[index] == source)
+            assert abs(counts[0] - counts[1]) <= 1
+    with pytest.raises(ValueError, match="both labels"):
+        training_order(records[:9], random.Random(42), "noul-balanced", sources[:9])
+    with pytest.raises(ValueError, match="source"):
+        training_order(records, random.Random(42), "noul-balanced")
+
+
+def test_repeated_sample_index_does_not_trigger_early_epoch_checkpoint(monkeypatch):
+    monkeypatch.setattr("rwkv_jev.cli.training_order", lambda *args: [0, 0, 1, 0])
+    observed = []
+    train(make_model(state_tuning=True), [("red", Question.parse(CHOICE), 0)] * 4,
+          epochs=1, learning_rate=0.01, seed=12, checkpoint_every=3,
+          checkpoint_callback=lambda model, epoch: observed.append(model.trained_steps))
+    assert observed == [3, 4]
 
 
 def test_validation_and_untrained_guard():

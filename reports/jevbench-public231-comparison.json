@@ -1,0 +1,101 @@
+{
+  "protocol": "JevBench v1 public tasks: easy + original + hard",
+  "harness_revision": "bb83e5da8bbb040aa772bcfe4c6275408dbeb831",
+  "task_count": 231,
+  "private_items_missing": 303,
+  "serving_max_tokens": 8192,
+  "cost_basis": "self_hosted_local_gpu",
+  "arms": {
+    "lower_lr_cross_entropy": {
+      "summary": "runs/jevbench-g1k-lower-public231-v3/summary.json",
+      "results": "runs/jevbench-g1k-lower-public231-v3/results.jsonl",
+      "manifest": "runs/jevbench-g1k-lower-public231-v3/manifest.json",
+      "correct": 149,
+      "attempted": 231,
+      "accuracy": 0.645021645021645,
+      "brier": 0.54995134726326,
+      "ece": 0.20966924360468311,
+      "ordinal_mae": 0.13370067173766254,
+      "strict_validity": 1.0,
+      "operational_success": 1.0,
+      "latency_p50_s": 0.346953995001968,
+      "latency_p95_s": 0.5066968930041185,
+      "per_family": {
+        "adequacy": 0.5833333333333334,
+        "adversarial": 0.8333333333333334,
+        "ambiguous": 0.5714285714285714,
+        "extraction": 0.9166666666666666,
+        "fact": 0.9166666666666666,
+        "intent": 0.9166666666666666,
+        "judge_hard": 0.4117647058823529,
+        "long_policy": 0.47368421052631576,
+        "multi_hop": 0.2777777777777778,
+        "ordinal": 1.0,
+        "policy": 0.6666666666666666,
+        "probability": 0.2,
+        "routing": 0.75,
+        "routing_hard": 1.0,
+        "temporal_numeric": 0.2,
+        "tool_selection": 1.0,
+        "tradeoff": 0.16666666666666666,
+        "trap": 0.625
+      },
+      "artifact_sha256": {
+        "summary.json": "04e289eaabedbb1a4b13ba6368c901631dc0e50f6ffec215fadc47c2f3212413",
+        "results.jsonl": "f2d43b48cea5b0c6d25959b7fe767bbaeb83a29e65d4cbefa3dfd11e66d31288",
+        "manifest.json": "6e4d5a1acb94c67e4e34290c429eaacdf6eab54b953cd89a4b080f2c65cd8110"
+      }
+    },
+    "pathwise_typed_reward": {
+      "summary": "runs/jevbench-g1k-pathwise-public231-v2/summary.json",
+      "results": "runs/jevbench-g1k-pathwise-public231-v2/results.jsonl",
+      "manifest": "runs/jevbench-g1k-pathwise-public231-v2/manifest.json",
+      "correct": 143,
+      "attempted": 231,
+      "accuracy": 0.6190476190476191,
+      "brier": 0.5743775094454557,
+      "ece": 0.23579302915122247,
+      "ordinal_mae": 0.16918830116527772,
+      "strict_validity": 1.0,
+      "operational_success": 1.0,
+      "latency_p50_s": 0.3314565319888061,
+      "latency_p95_s": 0.4764191514987033,
+      "per_family": {
+        "adequacy": 0.5,
+        "adversarial": 0.6666666666666666,
+        "ambiguous": 0.42857142857142855,
+        "extraction": 0.9583333333333334,
+        "fact": 0.9166666666666666,
+        "intent": 0.9166666666666666,
+        "judge_hard": 0.4117647058823529,
+        "long_policy": 0.42105263157894735,
+        "multi_hop": 0.2222222222222222,
+        "ordinal": 1.0,
+        "policy": 0.75,
+        "probability": 0.2,
+        "routing": 0.5833333333333334,
+        "routing_hard": 1.0,
+        "temporal_numeric": 0.13333333333333333,
+        "tool_selection": 1.0,
+        "tradeoff": 0.16666666666666666,
+        "trap": 0.625
+      },
+      "artifact_sha256": {
+        "summary.json": "7e35e1126147e984164f04b87bb39961ae7aeb9c9ad20abf69ac800e7d7830cf",
+        "results.jsonl": "c27d4e2fd86f294c96b05c878ab02a35944917f35b49fef29245cb2c63a9e204",
+        "manifest.json": "30a28d603ffe3d40e6fa8c0ceb2a2376f546a540dbf904557ae3a690862f5f4f"
+      }
+    }
+  },
+  "paired_summary": {
+    "lower_correct_minus_pathwise": 6,
+    "lower_accuracy_minus_pathwise": 0.02597402597402598
+  },
+  "interpretation": [
+    "This public-only 231-task result is not an official JevBench Score or rank.",
+    "The 303 organizer-held tasks are unavailable locally and were not accessed.",
+    "The lower-LR cross-entropy adapter beats pathwise by six public tasks; use it as the external baseline.",
+    "A failed preliminary run with max_tokens 2048 had 36 hard-task context failures and is excluded; v3/v2 use serving copies with max_tokens 8192 and zero failures.",
+    "Cost remains unpriced local compute and is not reported as zero."
+  ]
+}

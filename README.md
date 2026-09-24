@@ -15,8 +15,51 @@ development sample and **38/72 (52.8%)** on JevBench's original public subset.
 It is uncalibrated and is not a general-purpose release. See
 [EXPERIMENTS.md](EXPERIMENTS.md), [RESEARCH.md](RESEARCH.md) and [SOTA.md](SOTA.md)
 for comparisons, prior work and the path toward a competitive benchmark result.
-The subsequent full decision-v7 state-tuning run scores **44.3%** on 1,468 held-out
-development questions; neither result is an official JevBench rank.
+On the same 1,468-question development set, the state pilot scores **61.4%**,
+rank-16 LoRA **54.5%**, and head-only **48.0%** with matched pilot data and updates.
+The subsequent full-data state run regresses to **44.3%** and largely collapses
+to false on boolean questions. See [AUDIT.md](AUDIT.md) for controls, ablations
+and numerical limits. These are single-seed development results, not JevBench ranks.
+
+The follow-up [state-update screen](STATE_SCREEN.md) with state LR `1e-5` and
+head LR `1e-4` averages **68.39% accuracy across three seeds** after 1,536 updates
+(sample SD 0.45 percentage points). Matched controls average 46.46%, with high
+variability; control seed 44 scores the highest individual result, **69.48%**.
+Lower LR is more consistent in this sample. NLL and calibration error remain
+worse than the older pilot, and these are development results, not JevBench scores.
+
+A matched seed-42 objective screen scores **68.66%** with proper scoring and
+**67.17%** with Gaussian logit noise, versus **67.92%** for cross-entropy.
+The CLI's experimental `rlcd` objective uses reparameterized noisy proper scoring;
+it is not REINFORCE or a reproduction of Laya. The proper-score gain is only
+11 answers, NLL worsens, and neither new adapter has a JevBench result. See
+[the objective screen](STATE_SCREEN.md#proper-score-and-noisy-objective-screen).
+
+The completed [policy-gradient screen](POLICY_SCREEN.md) scores **67.03%** for
+actual Gaussian REINFORCE and **68.53%** for its matched differentiable control,
+with ordinal rewards limited to Score questions. The control also improves NLL,
+Brier and ECE over seed-42 cross-entropy, but needs replication. These remain
+development results, not JevBench scores or Laya recipe parity.
+
+Training loss logs and checkpoint timing are summarized in
+[LEARNING_CURVES.md](LEARNING_CURVES.md). Raw run directories are ignored by git;
+the checked-in report preserves the extracted points and final summaries.
+
+The pathwise candidate replicates at **68.89% ± 0.31 points across three seeds**
+on the reused development set, versus **68.39% ± 0.45** for lower-LR
+cross-entropy. It wins each matched seed but remains a small development gain;
+cross-entropy is still one answer ahead on the 72-question public JevBench cohort.
+
+On the exact 72-question JevBench original-public cohort, lower-LR cross-entropy
+scores **56/72 (77.8%)** and the pathwise typed-reward candidate scores **55/72
+(76.4%)**. Lower-LR cross-entropy is therefore the current external baseline;
+neither result is a full JevBench rank. See the
+[public comparison](EXPERIMENTS.md#public-jevbench-comparison-after-objective-screening).
+
+On all 231 currently public tasks, lower-LR cross-entropy scores **149/231
+(64.5%)**, while pathwise scores **143/231 (61.9%)**. Both have strict validity
+on every task. The broader public result makes lower-LR cross-entropy the safer
+external baseline; it is not an official 534-task JevBench score.
 
 ## Architecture
 
@@ -87,6 +130,36 @@ Replace `--state-tuning` with `--rank 8` for LoRA. Omit both to train only the h
 Combining the flags is rejected to keep the modes distinct. Trainable parameters
 use fp32; the frozen base can use bf16. Base checkpoint files stay unchanged.
 
+For controlled comparisons, the head is initialized before installing LoRA, so
+the same seed and architecture give the same initial head in all three modes.
+Older LoRA pilots used a different initialization order. Existing adapters still
+load their saved weights normally.
+
+Add `--checkpoint-every 1000` to save adapter snapshots every 1,000 updates and
+at epoch ends in `adapter-checkpoints/` beside the output adapter. These snapshots
+are for evaluation; they do not include optimizer state for resuming training.
+
+State tuning also supports `--state-lr` independently of the head's `--lr`, and
+`--state-max-norm` to project the learned initial WKV onto a global norm bound
+after each update. `--sampling noul-balanced` balances boolean labels within
+each source while preserving source/type frequencies; training records need
+`src` or `_meta.source`. The default remains natural shuffling. See
+[STATE_SCREEN.md](STATE_SCREEN.md) for the four-arm experimental protocol.
+
+`--objective proper-score` optimizes log, spherical and ranked probability scores;
+`--spherical-weight` and `--rps-weight` default to 0.5. The experimental
+`--objective rlcd --exploration-std 0.05` adds Gaussian logit noise and uses
+pathwise gradients. Its detached EMA baseline (`--baseline-decay 0.95`) centers
+logged loss only and does not affect updates. These legacy objectives also use the supplied
+ordering of unordered Choice candidates, a limitation of this exploratory screen.
+The default objective remains `cross-entropy`.
+
+`--objective reinforce` uses a detached reward and Gaussian policy log probability;
+`--objective pathwise` differentiates the same sampled reward directly. Both use
+`--policy-samples 32` paired perturbations, stable log probabilities and RPS only
+for Score questions. They are independent implementations, not Laya recipe parity.
+See [POLICY_SCREEN.md](POLICY_SCREEN.md) for the estimator and matched protocol.
+
 Training uses complete context/question/candidate sequences: the fused kernel
 differentiates its initial state input but not its returned final state.
 Inference shares and branches recurrent states. Oversized inputs raise errors
@@ -115,6 +188,20 @@ Score accuracy uses argmax, while its output also exposes the expectation.
 Untrained heads are rejected by the API. Choice/Score `confidence` is
 `(K * max(p) - 1) / (K - 1)`, or one for a single choice; this is not TypeSafe
 Score formula parity or a measured correctness probability. Calibration is needed.
+
+For a comparison on identical questions, `scripts/audit_decisions.py` reports
+metrics by source/type, the pilot subset, exact train/development overlap, and
+cached/full-sequence probability differences. It verifies adapter training,
+base and vocabulary hashes, and writes per-question outcomes beside the report:
+
+```bash
+.venv/bin/python scripts/audit_decisions.py --base "$BASE" --vocab "$VOCAB" \
+  --adapter runs/state/adapter.pt --train train.jsonl --data heldout.jsonl \
+  --subset runs/pilot-data/development.jsonl --output runs/audit/state.json
+```
+
+Use each adapter's actual training file and the same development file for all
+models. Exact overlap checks do not detect paraphrases or pretraining exposure.
 
 ## Browser demo and benchmark endpoint
 

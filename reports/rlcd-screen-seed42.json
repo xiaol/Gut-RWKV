@@ -1,0 +1,805 @@
+{
+  "protocol": "Fixed final 1536-update objective screen; seed 42; reused decision-v7 development, not JevBench.",
+  "matched_settings": {
+    "seed": 42,
+    "updates": 1536,
+    "head_lr": 0.0001,
+    "state_lr": 0.00001,
+    "sampling": "natural",
+    "training_pool_questions": 15576,
+    "development_questions": 1468,
+    "dtype": "bfloat16",
+    "optimizer": "AdamW",
+    "gradient_clip_norm": 1,
+    "checkpoint_every": 384
+  },
+  "objectives": {
+    "cross_entropy": "Standard cross-entropy; existing matched lower-state-LR control.",
+    "proper_score": "Maximize log p(target) + 0.5*spherical - 0.5*mean squared cumulative probability error.",
+    "noisy_proper_score": "Same proper score with Gaussian logit noise std=0.05; reparameterized gradients. CLI name rlcd."
+  },
+  "limitations": [
+    "No REINFORCE, GRPO, PPO, policy ratio or KL reference; not a reproduction of Laya.",
+    "A detached EMA baseline centers logged loss only; it does not alter the pathwise gradient or its variance.",
+    "RPS applies to every question type, including unordered Choice labels; updates can depend on arbitrary candidate order.",
+    "Single seed and repeatedly inspected development data; no independent calibration split or official benchmark rank.",
+    "Pilot reference used 192 training questions and 384 updates, so it is not training-matched.",
+    "Code was not hashed before these two training launches; checkpoint metadata, adapter, input and outcome hashes are retained.",
+    "Limited cache/full-sequence probes do not establish numerical equivalence."
+  ],
+  "arms": {
+    "cross_entropy": {
+      "adapter": "/root/x/Gut-RWKV/runs/state-screen-v1-lower_state_lr/lower_state_lr/adapter.pt",
+      "evaluation": "runs/state-screen-v1-lower_state_lr/lower_state_lr/development.json",
+      "sha256": {
+        "base": "eea4fbf9fee9624958f84de3a8e3fd55a1840d76e7be53e211618d48f3ce0e58",
+        "vocab": "e6dee3d4e31b4d5c40ac99508ac6c701ceef4bed681bf2167ce9a908552bca89",
+        "adapter": "a7aa0dc1b07d01c19ca568d17481114f56e436865229fd575c1f715a04ea9407",
+        "train": "7ed5254b5cb5291baefaceb09edf7e13110258211518c8038f4a12c11bd628ad",
+        "data": "8d5765d7aec4d08c61854f4664ca79ec2ba44ed092e9b967eaf61ed86c496d9c",
+        "subset": "2c19ce633d146e500d32efcf2b090cfcb2214f6b827e0856cbdfd04c597b8eca"
+      },
+      "evaluation_sha256": "fba60e118cabdda113fa0696beaf8611a1f9b972e98002ac7e1333ba2c76a4d8",
+      "outcomes_sha256": "98cbb055990edf0dcf3224e5a74007a598b6bfebf6c4d0de69e57a0ef5b45e60",
+      "trained_steps": 1536,
+      "metadata": {
+        "base_sha256": "eea4fbf9fee9624958f84de3a8e3fd55a1840d76e7be53e211618d48f3ce0e58",
+        "vocab_sha256": "e6dee3d4e31b4d5c40ac99508ac6c701ceef4bed681bf2167ce9a908552bca89",
+        "data_sha256": "7ed5254b5cb5291baefaceb09edf7e13110258211518c8038f4a12c11bd628ad",
+        "seed": 42,
+        "lr": 0.0001,
+        "dtype": "bfloat16",
+        "epochs": 1,
+        "head_initialization": "before_lora",
+        "base": "/root/x/models/rwkv7/rwkv-g1k-3b-temp-5441.pth",
+        "state_lr": 0.00001,
+        "state_max_norm": null,
+        "sampling": "natural",
+        "max_steps": 1536
+      },
+      "correct": 997,
+      "metrics": {
+        "questions": 1468,
+        "accuracy": 0.6791553133514986,
+        "nll": 1.4523063285010362,
+        "brier": 0.5088781475171568,
+        "ece_10_bins": 0.20754826287624784,
+        "by_type": {
+          "choice": {
+            "questions": 756,
+            "accuracy": 0.6415343915343915,
+            "nll": 1.6689343920180666,
+            "brier": 0.5764132115538788,
+            "ece_10_bins": 0.23140760995053428,
+            "uniform_accuracy": 0.2312795669938527
+          },
+          "noul": {
+            "questions": 472,
+            "accuracy": 0.8220338983050848,
+            "nll": 0.9124050561308987,
+            "brier": 0.2924951114373343,
+            "ece_10_bins": 0.12612176888574989,
+            "uniform_accuracy": 0.5
+          },
+          "score": {
+            "questions": 240,
+            "accuracy": 0.5166666666666667,
+            "nll": 1.8317337640836608,
+            "brier": 0.7216960000918,
+            "ece_10_bins": 0.2959823129077752,
+            "uniform_accuracy": 0.2
+          }
+        }
+      },
+      "by_source": {
+        "agnews": {
+          "questions": 116,
+          "accuracy": 0.7672413793103449
+        },
+        "agnews_yn": {
+          "questions": 184,
+          "accuracy": 0.8695652173913043
+        },
+        "amazon": {
+          "questions": 80,
+          "accuracy": 0.5
+        },
+        "banking77": {
+          "questions": 116,
+          "accuracy": 0.6379310344827587
+        },
+        "boolq": {
+          "questions": 80,
+          "accuracy": 0.7125
+        },
+        "composition_atom": {
+          "questions": 16,
+          "accuracy": 0.5625
+        },
+        "composition_conditional": {
+          "questions": 16,
+          "accuracy": 0.625
+        },
+        "composition_conjunction": {
+          "questions": 16,
+          "accuracy": 0.6875
+        },
+        "composition_disjunction": {
+          "questions": 16,
+          "accuracy": 0.75
+        },
+        "composition_exception": {
+          "questions": 16,
+          "accuracy": 0.3125
+        },
+        "composition_negation": {
+          "questions": 16,
+          "accuracy": 0.25
+        },
+        "composition_nested_and": {
+          "questions": 16,
+          "accuracy": 0.75
+        },
+        "composition_nested_or": {
+          "questions": 16,
+          "accuracy": 0.5
+        },
+        "contrastive_age_eligibility": {
+          "questions": 24,
+          "accuracy": 0.5833333333333334
+        },
+        "contrastive_quantity_limit": {
+          "questions": 24,
+          "accuracy": 0.25
+        },
+        "contrastive_return_window": {
+          "questions": 24,
+          "accuracy": 0.625
+        },
+        "contrastive_spend_threshold": {
+          "questions": 24,
+          "accuracy": 0.5
+        },
+        "dbpedia14": {
+          "questions": 116,
+          "accuracy": 0.8879310344827587
+        },
+        "imdb": {
+          "questions": 80,
+          "accuracy": 0.8625
+        },
+        "mnli": {
+          "questions": 116,
+          "accuracy": 0.41379310344827586
+        },
+        "sst5": {
+          "questions": 80,
+          "accuracy": 0.5
+        },
+        "trec": {
+          "questions": 116,
+          "accuracy": 0.7068965517241379
+        },
+        "yelp": {
+          "questions": 80,
+          "accuracy": 0.55
+        },
+        "yelp_yn": {
+          "questions": 80,
+          "accuracy": 0.9125
+        }
+      },
+      "noul_predictions": {
+        "0": 291,
+        "1": 181
+      },
+      "cache_parity": {
+        "questions": 48,
+        "argmax_disagreements": 0,
+        "max_probability_difference": 0.08055904507637024
+      },
+      "data_overlap": {
+        "training_questions": 15576,
+        "development_questions": 1468,
+        "development_questions_with_training_state": 0,
+        "development_questions_with_training_group": 0,
+        "development_questions_with_training_question": 0,
+        "conflicting_question_keys_across_splits": 0,
+        "scope": "Exact serialized states, source/group IDs, and semantic question keys; no fuzzy overlap detection."
+      },
+      "training_summary": {
+        "adapter": "/root/x/Gut-RWKV/runs/state-screen-v1-lower_state_lr/lower_state_lr/adapter.pt",
+        "steps": 1536,
+        "final_training_loss": 0.7061681747436523,
+        "initial_state_norm": 1.48415207862854
+      }
+    },
+    "proper_score": {
+      "adapter": "runs/rlcd-screen-proper-v2/adapter.pt",
+      "evaluation": "runs/rlcd-screen-proper-v2/development.json",
+      "sha256": {
+        "base": "eea4fbf9fee9624958f84de3a8e3fd55a1840d76e7be53e211618d48f3ce0e58",
+        "vocab": "e6dee3d4e31b4d5c40ac99508ac6c701ceef4bed681bf2167ce9a908552bca89",
+        "adapter": "3181f7c9405bce6b89721dc9cf79bdf62e2ebf0e4bf42fe565fdef5f03185231",
+        "train": "7ed5254b5cb5291baefaceb09edf7e13110258211518c8038f4a12c11bd628ad",
+        "data": "8d5765d7aec4d08c61854f4664ca79ec2ba44ed092e9b967eaf61ed86c496d9c",
+        "subset": "2c19ce633d146e500d32efcf2b090cfcb2214f6b827e0856cbdfd04c597b8eca"
+      },
+      "evaluation_sha256": "fbe9a066158577090e217e619597fd7a7a539519c111552f2ee0313a31f45be6",
+      "outcomes_sha256": "582a2e214d2ec53f21d01aec4f00c704189f7c86409ac0510076a06cb1f8651e",
+      "trained_steps": 1536,
+      "metadata": {
+        "base_sha256": "eea4fbf9fee9624958f84de3a8e3fd55a1840d76e7be53e211618d48f3ce0e58",
+        "vocab_sha256": "e6dee3d4e31b4d5c40ac99508ac6c701ceef4bed681bf2167ce9a908552bca89",
+        "data_sha256": "7ed5254b5cb5291baefaceb09edf7e13110258211518c8038f4a12c11bd628ad",
+        "seed": 42,
+        "lr": 0.0001,
+        "dtype": "bfloat16",
+        "epochs": 1,
+        "head_initialization": "before_lora",
+        "base": "/root/x/models/rwkv7/rwkv-g1k-3b-temp-5441.pth",
+        "state_lr": 0.00001,
+        "state_max_norm": null,
+        "sampling": "natural",
+        "max_steps": 1536,
+        "objective": "proper-score",
+        "exploration_std": 0.05,
+        "spherical_weight": 0.5,
+        "rps_weight": 0.5,
+        "baseline_decay": 0.95
+      },
+      "correct": 1008,
+      "metrics": {
+        "questions": 1468,
+        "accuracy": 0.6866485013623979,
+        "nll": 1.500775312910751,
+        "brier": 0.4993500692307572,
+        "ece_10_bins": 0.20582619157165533,
+        "by_type": {
+          "choice": {
+            "questions": 756,
+            "accuracy": 0.6455026455026455,
+            "nll": 1.8023307108872992,
+            "brier": 0.5865578439537924,
+            "ece_10_bins": 0.25043338966905754,
+            "uniform_accuracy": 0.2312795669938527
+          },
+          "noul": {
+            "questions": 472,
+            "accuracy": 0.8347457627118644,
+            "nll": 0.8800402530932688,
+            "brier": 0.2701824081056864,
+            "ece_10_bins": 0.11822994975215298,
+            "uniform_accuracy": 0.5
+          },
+          "score": {
+            "questions": 240,
+            "accuracy": 0.525,
+            "nll": 1.7716547602590065,
+            "brier": 0.6753419790658353,
+            "ece_10_bins": 0.24524775594472883,
+            "uniform_accuracy": 0.2
+          }
+        }
+      },
+      "by_source": {
+        "agnews": {
+          "questions": 116,
+          "accuracy": 0.8017241379310345
+        },
+        "agnews_yn": {
+          "questions": 184,
+          "accuracy": 0.8913043478260869
+        },
+        "amazon": {
+          "questions": 80,
+          "accuracy": 0.5375
+        },
+        "banking77": {
+          "questions": 116,
+          "accuracy": 0.6551724137931034
+        },
+        "boolq": {
+          "questions": 80,
+          "accuracy": 0.7375
+        },
+        "composition_atom": {
+          "questions": 16,
+          "accuracy": 0.6875
+        },
+        "composition_conditional": {
+          "questions": 16,
+          "accuracy": 0.625
+        },
+        "composition_conjunction": {
+          "questions": 16,
+          "accuracy": 0.625
+        },
+        "composition_disjunction": {
+          "questions": 16,
+          "accuracy": 0.4375
+        },
+        "composition_exception": {
+          "questions": 16,
+          "accuracy": 0.625
+        },
+        "composition_negation": {
+          "questions": 16,
+          "accuracy": 0.5
+        },
+        "composition_nested_and": {
+          "questions": 16,
+          "accuracy": 0.625
+        },
+        "composition_nested_or": {
+          "questions": 16,
+          "accuracy": 0.375
+        },
+        "contrastive_age_eligibility": {
+          "questions": 24,
+          "accuracy": 0.625
+        },
+        "contrastive_quantity_limit": {
+          "questions": 24,
+          "accuracy": 0.25
+        },
+        "contrastive_return_window": {
+          "questions": 24,
+          "accuracy": 0.5
+        },
+        "contrastive_spend_threshold": {
+          "questions": 24,
+          "accuracy": 0.5416666666666666
+        },
+        "dbpedia14": {
+          "questions": 116,
+          "accuracy": 0.8879310344827587
+        },
+        "imdb": {
+          "questions": 80,
+          "accuracy": 0.8875
+        },
+        "mnli": {
+          "questions": 116,
+          "accuracy": 0.35344827586206895
+        },
+        "sst5": {
+          "questions": 80,
+          "accuracy": 0.475
+        },
+        "trec": {
+          "questions": 116,
+          "accuracy": 0.7241379310344828
+        },
+        "yelp": {
+          "questions": 80,
+          "accuracy": 0.5625
+        },
+        "yelp_yn": {
+          "questions": 80,
+          "accuracy": 0.9125
+        }
+      },
+      "noul_predictions": {
+        "0": 281,
+        "1": 191
+      },
+      "cache_parity": {
+        "questions": 48,
+        "argmax_disagreements": 0,
+        "max_probability_difference": 0.12421339750289917
+      },
+      "data_overlap": {
+        "training_questions": 15576,
+        "development_questions": 1468,
+        "development_questions_with_training_state": 0,
+        "development_questions_with_training_group": 0,
+        "development_questions_with_training_question": 0,
+        "conflicting_question_keys_across_splits": 0,
+        "scope": "Exact serialized states, source/group IDs, and semantic question keys; no fuzzy overlap detection."
+      },
+      "training_summary": {
+        "adapter": "runs/rlcd-screen-proper-v2/adapter.pt",
+        "steps": 1536,
+        "final_training_loss": -0.11431533098220825,
+        "initial_state_norm": 1.5633903741836548
+      }
+    },
+    "noisy_proper_score": {
+      "adapter": "runs/rlcd-screen-rlcd-v2/adapter.pt",
+      "evaluation": "runs/rlcd-screen-rlcd-v2/development.json",
+      "sha256": {
+        "base": "eea4fbf9fee9624958f84de3a8e3fd55a1840d76e7be53e211618d48f3ce0e58",
+        "vocab": "e6dee3d4e31b4d5c40ac99508ac6c701ceef4bed681bf2167ce9a908552bca89",
+        "adapter": "4dd787f12ae278fe1c5c8243eef152aa2ef38b9ff3e3c2431962d55c806f5f8a",
+        "train": "7ed5254b5cb5291baefaceb09edf7e13110258211518c8038f4a12c11bd628ad",
+        "data": "8d5765d7aec4d08c61854f4664ca79ec2ba44ed092e9b967eaf61ed86c496d9c",
+        "subset": "2c19ce633d146e500d32efcf2b090cfcb2214f6b827e0856cbdfd04c597b8eca"
+      },
+      "evaluation_sha256": "86d50e40823340dad828b7b6dd92f8f8150806902c3ee7a4d09e9913f0202466",
+      "outcomes_sha256": "12a5e893259ed69d8a6414e4f70016ac9799a2bc50d416539d4a1554fd63b52a",
+      "trained_steps": 1536,
+      "metadata": {
+        "base_sha256": "eea4fbf9fee9624958f84de3a8e3fd55a1840d76e7be53e211618d48f3ce0e58",
+        "vocab_sha256": "e6dee3d4e31b4d5c40ac99508ac6c701ceef4bed681bf2167ce9a908552bca89",
+        "data_sha256": "7ed5254b5cb5291baefaceb09edf7e13110258211518c8038f4a12c11bd628ad",
+        "seed": 42,
+        "lr": 0.0001,
+        "dtype": "bfloat16",
+        "epochs": 1,
+        "head_initialization": "before_lora",
+        "base": "/root/x/models/rwkv7/rwkv-g1k-3b-temp-5441.pth",
+        "state_lr": 0.00001,
+        "state_max_norm": null,
+        "sampling": "natural",
+        "max_steps": 1536,
+        "objective": "rlcd",
+        "exploration_std": 0.05,
+        "spherical_weight": 0.5,
+        "rps_weight": 0.5,
+        "baseline_decay": 0.95
+      },
+      "correct": 986,
+      "metrics": {
+        "questions": 1468,
+        "accuracy": 0.6716621253405994,
+        "nll": 1.6720180475643065,
+        "brier": 0.5355538195738901,
+        "ece_10_bins": 0.22344368219639527,
+        "by_type": {
+          "choice": {
+            "questions": 756,
+            "accuracy": 0.6190476190476191,
+            "nll": 2.003118412071374,
+            "brier": 0.6283720255098746,
+            "ece_10_bins": 0.2681896510046153,
+            "uniform_accuracy": 0.2312795669938527
+          },
+          "noul": {
+            "questions": 472,
+            "accuracy": 0.836864406779661,
+            "nll": 0.9743926512715976,
+            "brier": 0.27674108297622074,
+            "ece_10_bins": 0.12206048051179465,
+            "uniform_accuracy": 0.5
+          },
+          "score": {
+            "questions": 240,
+            "accuracy": 0.5125,
+            "nll": 2.0010485120760375,
+            "brier": 0.7521748528509555,
+            "ece_10_bins": 0.3024919694910447,
+            "uniform_accuracy": 0.2
+          }
+        }
+      },
+      "by_source": {
+        "agnews": {
+          "questions": 116,
+          "accuracy": 0.7758620689655172
+        },
+        "agnews_yn": {
+          "questions": 184,
+          "accuracy": 0.9021739130434783
+        },
+        "amazon": {
+          "questions": 80,
+          "accuracy": 0.575
+        },
+        "banking77": {
+          "questions": 116,
+          "accuracy": 0.6120689655172413
+        },
+        "boolq": {
+          "questions": 80,
+          "accuracy": 0.7125
+        },
+        "composition_atom": {
+          "questions": 16,
+          "accuracy": 0.375
+        },
+        "composition_conditional": {
+          "questions": 16,
+          "accuracy": 0.625
+        },
+        "composition_conjunction": {
+          "questions": 16,
+          "accuracy": 0.4375
+        },
+        "composition_disjunction": {
+          "questions": 16,
+          "accuracy": 0.8125
+        },
+        "composition_exception": {
+          "questions": 16,
+          "accuracy": 0.125
+        },
+        "composition_negation": {
+          "questions": 16,
+          "accuracy": 0.3125
+        },
+        "composition_nested_and": {
+          "questions": 16,
+          "accuracy": 0.4375
+        },
+        "composition_nested_or": {
+          "questions": 16,
+          "accuracy": 0.5
+        },
+        "contrastive_age_eligibility": {
+          "questions": 24,
+          "accuracy": 0.7083333333333334
+        },
+        "contrastive_quantity_limit": {
+          "questions": 24,
+          "accuracy": 0.25
+        },
+        "contrastive_return_window": {
+          "questions": 24,
+          "accuracy": 0.625
+        },
+        "contrastive_spend_threshold": {
+          "questions": 24,
+          "accuracy": 0.5
+        },
+        "dbpedia14": {
+          "questions": 116,
+          "accuracy": 0.8879310344827587
+        },
+        "imdb": {
+          "questions": 80,
+          "accuracy": 0.8625
+        },
+        "mnli": {
+          "questions": 116,
+          "accuracy": 0.35344827586206895
+        },
+        "sst5": {
+          "questions": 80,
+          "accuracy": 0.4875
+        },
+        "trec": {
+          "questions": 116,
+          "accuracy": 0.75
+        },
+        "yelp": {
+          "questions": 80,
+          "accuracy": 0.475
+        },
+        "yelp_yn": {
+          "questions": 80,
+          "accuracy": 0.8875
+        }
+      },
+      "noul_predictions": {
+        "0": 294,
+        "1": 178
+      },
+      "cache_parity": {
+        "questions": 48,
+        "argmax_disagreements": 4,
+        "max_probability_difference": 0.09601819515228271
+      },
+      "data_overlap": {
+        "training_questions": 15576,
+        "development_questions": 1468,
+        "development_questions_with_training_state": 0,
+        "development_questions_with_training_group": 0,
+        "development_questions_with_training_question": 0,
+        "conflicting_question_keys_across_splits": 0,
+        "scope": "Exact serialized states, source/group IDs, and semantic question keys; no fuzzy overlap detection."
+      },
+      "training_summary": {
+        "adapter": "runs/rlcd-screen-rlcd-v2/adapter.pt",
+        "steps": 1536,
+        "final_training_loss": 3.0147175788879395,
+        "initial_state_norm": 1.589660882949829
+      }
+    },
+    "pilot_reference": {
+      "adapter": "runs/state-pilot-g1k-3b/adapter.pt",
+      "evaluation": "runs/matched-audit/pilot.json",
+      "sha256": {
+        "base": "eea4fbf9fee9624958f84de3a8e3fd55a1840d76e7be53e211618d48f3ce0e58",
+        "vocab": "e6dee3d4e31b4d5c40ac99508ac6c701ceef4bed681bf2167ce9a908552bca89",
+        "adapter": "665ac207121125216a645a9500574be731c42abe69ef705f3d782a2ec72ee645",
+        "train": "dd9ee4616b3dbc96a5e8a44a3a8dd2b8daeb01102553730a317f8b407c98d2ac",
+        "data": "8d5765d7aec4d08c61854f4664ca79ec2ba44ed092e9b967eaf61ed86c496d9c",
+        "subset": "2c19ce633d146e500d32efcf2b090cfcb2214f6b827e0856cbdfd04c597b8eca"
+      },
+      "evaluation_sha256": "d67b4bb30e6830b70af58ad26fd3fd7ec66b42523202b43d78fca0faf8a48104",
+      "outcomes_sha256": "02638467dda18acc603b93c52a6969c209e49289fd8af32e34c2235229b190d0",
+      "trained_steps": 384,
+      "metadata": {
+        "base_sha256": "eea4fbf9fee9624958f84de3a8e3fd55a1840d76e7be53e211618d48f3ce0e58",
+        "vocab_sha256": "e6dee3d4e31b4d5c40ac99508ac6c701ceef4bed681bf2167ce9a908552bca89",
+        "data_sha256": "dd9ee4616b3dbc96a5e8a44a3a8dd2b8daeb01102553730a317f8b407c98d2ac",
+        "seed": 42,
+        "lr": 0.0001,
+        "dtype": "bfloat16",
+        "base": "/root/x/models/rwkv7/rwkv-g1k-3b-temp-5441.pth"
+      },
+      "correct": 901,
+      "metrics": {
+        "questions": 1468,
+        "accuracy": 0.6137602179836512,
+        "nll": 1.1550599966790176,
+        "brier": 0.5557394252078969,
+        "ece_10_bins": 0.15669323923066258,
+        "by_type": {
+          "choice": {
+            "questions": 756,
+            "accuracy": 0.6044973544973545,
+            "nll": 1.3594013138251078,
+            "brier": 0.59465578218369,
+            "ece_10_bins": 0.20627304651188078,
+            "uniform_accuracy": 0.2312795669938527
+          },
+          "noul": {
+            "questions": 472,
+            "accuracy": 0.7245762711864406,
+            "nll": 0.6909427275535008,
+            "brier": 0.40626865087582387,
+            "ece_10_bins": 0.09764201181419825,
+            "uniform_accuracy": 0.5
+          },
+          "score": {
+            "questions": 240,
+            "accuracy": 0.425,
+            "nll": 1.4241488102823496,
+            "brier": 0.727112090253892,
+            "ece_10_bins": 0.1456586667026083,
+            "uniform_accuracy": 0.2
+          }
+        }
+      },
+      "by_source": {
+        "agnews": {
+          "questions": 116,
+          "accuracy": 0.8017241379310345
+        },
+        "agnews_yn": {
+          "questions": 184,
+          "accuracy": 0.7391304347826086
+        },
+        "amazon": {
+          "questions": 80,
+          "accuracy": 0.45
+        },
+        "banking77": {
+          "questions": 116,
+          "accuracy": 0.5517241379310345
+        },
+        "boolq": {
+          "questions": 80,
+          "accuracy": 0.7
+        },
+        "composition_atom": {
+          "questions": 16,
+          "accuracy": 0.375
+        },
+        "composition_conditional": {
+          "questions": 16,
+          "accuracy": 0.625
+        },
+        "composition_conjunction": {
+          "questions": 16,
+          "accuracy": 0.4375
+        },
+        "composition_disjunction": {
+          "questions": 16,
+          "accuracy": 0.8125
+        },
+        "composition_exception": {
+          "questions": 16,
+          "accuracy": 0.375
+        },
+        "composition_negation": {
+          "questions": 16,
+          "accuracy": 0.375
+        },
+        "composition_nested_and": {
+          "questions": 16,
+          "accuracy": 0.5
+        },
+        "composition_nested_or": {
+          "questions": 16,
+          "accuracy": 0.625
+        },
+        "contrastive_age_eligibility": {
+          "questions": 24,
+          "accuracy": 0.5
+        },
+        "contrastive_quantity_limit": {
+          "questions": 24,
+          "accuracy": 0.25
+        },
+        "contrastive_return_window": {
+          "questions": 24,
+          "accuracy": 0.5
+        },
+        "contrastive_spend_threshold": {
+          "questions": 24,
+          "accuracy": 0.5
+        },
+        "dbpedia14": {
+          "questions": 116,
+          "accuracy": 0.7931034482758621
+        },
+        "imdb": {
+          "questions": 80,
+          "accuracy": 0.7375
+        },
+        "mnli": {
+          "questions": 116,
+          "accuracy": 0.3793103448275862
+        },
+        "sst5": {
+          "questions": 80,
+          "accuracy": 0.475
+        },
+        "trec": {
+          "questions": 116,
+          "accuracy": 0.6896551724137931
+        },
+        "yelp": {
+          "questions": 80,
+          "accuracy": 0.35
+        },
+        "yelp_yn": {
+          "questions": 80,
+          "accuracy": 0.8375
+        }
+      },
+      "noul_predictions": {
+        "0": 181,
+        "1": 291
+      },
+      "cache_parity": {
+        "questions": 48,
+        "argmax_disagreements": 0,
+        "max_probability_difference": 0.05973482131958008
+      },
+      "data_overlap": {
+        "training_questions": 192,
+        "development_questions": 1468,
+        "development_questions_with_training_state": 0,
+        "development_questions_with_training_group": 0,
+        "development_questions_with_training_question": 0,
+        "conflicting_question_keys_across_splits": 0,
+        "scope": "Exact serialized states, source/group IDs, and semantic question keys; no fuzzy overlap detection."
+      },
+      "training_summary": {
+        "adapter": "runs/state-pilot-g1k-3b/adapter.pt",
+        "steps": 384,
+        "final_training_loss": 0.5595828890800476
+      }
+    }
+  },
+  "paired_comparisons": [
+    {
+      "candidate": "proper_score",
+      "reference": "cross_entropy",
+      "gained": 72,
+      "lost": 61
+    },
+    {
+      "candidate": "noisy_proper_score",
+      "reference": "cross_entropy",
+      "gained": 70,
+      "lost": 81
+    },
+    {
+      "candidate": "noisy_proper_score",
+      "reference": "proper_score",
+      "gained": 74,
+      "lost": 96
+    },
+    {
+      "candidate": "proper_score",
+      "reference": "pilot_reference",
+      "gained": 242,
+      "lost": 135
+    }
+  ]
+}

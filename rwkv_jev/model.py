@@ -31,12 +31,6 @@ class DecisionModel(nn.Module):
             raise ValueError("Choose state tuning or LoRA, not both")
         backbone.requires_grad_(False)
         backbone.head = nn.Identity()
-        if rank:
-            for block in backbone.blocks:
-                for name in ("receptance", "key", "value", "output"):
-                    setattr(block.att, name, LowRankLinear(getattr(block.att, name), rank))
-                for name in ("key", "value"):
-                    setattr(block.ffn, name, LowRankLinear(getattr(block.ffn, name), rank))
         self.backbone = backbone
         self.initial_wkv = None
         if state_tuning:
@@ -48,6 +42,12 @@ class DecisionModel(nn.Module):
         self.head = nn.Sequential(nn.LayerNorm(backbone.config.hidden_size),
                                   nn.Linear(backbone.config.hidden_size, head_size), nn.GELU(),
                                   nn.Linear(head_size, 1, bias=False)).to(backbone.device)
+        if rank:
+            for block in backbone.blocks:
+                for name in ("receptance", "key", "value", "output"):
+                    setattr(block.att, name, LowRankLinear(getattr(block.att, name), rank))
+                for name in ("key", "value"):
+                    setattr(block.ffn, name, LowRankLinear(getattr(block.ffn, name), rank))
         self.settings = {"rank": rank, "head_size": head_size, "max_tokens": max_tokens,
                          "candidate_batch": candidate_batch}
         if state_tuning:

@@ -1,0 +1,39 @@
+{
+  "protocol": "JevBench v1 original-public cohort",
+  "harness_revision": "bb83e5da8bbb040aa772bcfe4c6275408dbeb831",
+  "task_count": 72,
+  "base_sha256": "eea4fbf9fee9624958f84de3a8e3fd55a1840d76e7be53e211618d48f3ce0e58",
+  "serving": {"adapter": "typesafe", "model": "gut-rwkv", "requests": "serial", "cost_basis": "self_hosted_local_gpu", "strict_schema_validity": 1.0},
+  "arms": {
+    "lower_lr_cross_entropy": {
+      "adapter": "runs/state-screen-v1-lower_state_lr/lower_state_lr/adapter.pt",
+      "summary": "runs/jevbench-g1k-lower-lr/summary.json",
+      "results": "runs/jevbench-g1k-lower-lr/results.jsonl",
+      "correct": 56, "accuracy": 0.7777777777777778, "brier": 0.38583127552310503,
+      "ece": 0.21430578796124614, "ordinal_mae": 0.0004957777845141139,
+      "paraphrase_agreement": 0.8333333333333334, "both_correct_rate": 0.6944444444444444,
+      "latency_p50_s": 0.3331754619939602, "latency_p95_s": 0.3769101100566331,
+      "families": {"adequacy": 0.5833333333333334, "extraction": 0.8333333333333334, "intent": 0.8333333333333334, "ordinal": 1.0, "policy": 0.6666666666666666, "routing": 0.75},
+      "artifact_sha256": {"results": "b2274e85dbfdfbeb8e4c7123d583a7afee0be8a1152fdf0f8ed4280a74ca8d66", "summary": "ea80f7cb6c2479e1055f514b83e5cf7430e2f2c85ae740bab6c1bab1ba6f40f9", "manifest": "0265a4b972c3ace665d6b4546c9b318b4170458f441c97bbe83c69383317c3d3"}
+    },
+    "pathwise_typed_reward": {
+      "adapter": "runs/policy-screen-seed42-pathwise/pathwise/adapter.pt",
+      "summary": "runs/jevbench-g1k-pathwise/summary.json",
+      "results": "runs/jevbench-g1k-pathwise/results.jsonl",
+      "correct": 55, "accuracy": 0.7638888888888888, "brier": 0.404677251044568,
+      "ece": 0.17458835840989198, "ordinal_mae": 0.012760627174129032,
+      "paraphrase_agreement": 0.8055555555555556, "both_correct_rate": 0.6666666666666666,
+      "latency_p50_s": 0.3348790764939622, "latency_p95_s": 0.3607962919064448,
+      "families": {"adequacy": 0.5, "extraction": 0.9166666666666666, "intent": 0.8333333333333334, "ordinal": 1.0, "policy": 0.75, "routing": 0.5833333333333334},
+      "artifact_sha256": {"results": "d0656e681b9c4847c643f7f13201ca1b5f8814f96261869e242176e4d7e661aa", "summary": "50422b3c17a792cb95fe098f536303404bd0e920cda251e0948b88b54bb89d08", "manifest": "5977d5d70182783c20f8513994d16f5e26cd032f1f10eec7dd95792350705c6e"}
+    }
+  },
+  "paired_comparison": {"lower_lr_gained_over_pathwise": 5, "lower_lr_lost_to_pathwise": 4, "same_decision": 63},
+  "interpretation": [
+    "Lower-LR cross-entropy is stronger by one answer on this public cohort.",
+    "Pathwise improves the earlier 38/72 pilot but does not beat the matched baseline.",
+    "This is public evidence, not the complete 534-decision evaluation or an official rank.",
+    "The full test and organizer-held items were not opened; no leaderboard submission was made.",
+    "Cost is unpriced local compute and remains null rather than zero."
+  ]
+}

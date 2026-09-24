@@ -1,0 +1,1056 @@
+{
+  "protocol": "Fixed final 1536 updates, seeds 42/43/44, same 1468 development questions; no new JevBench evaluation.",
+  "arms": {
+    "cross_entropy": [
+      {
+        "seed": 42,
+        "adapter": "runs/state-screen-v1-lower_state_lr/lower_state_lr/adapter.pt",
+        "sha256": {
+          "base": "eea4fbf9fee9624958f84de3a8e3fd55a1840d76e7be53e211618d48f3ce0e58",
+          "vocab": "e6dee3d4e31b4d5c40ac99508ac6c701ceef4bed681bf2167ce9a908552bca89",
+          "adapter": "a7aa0dc1b07d01c19ca568d17481114f56e436865229fd575c1f715a04ea9407",
+          "train": "7ed5254b5cb5291baefaceb09edf7e13110258211518c8038f4a12c11bd628ad",
+          "data": "8d5765d7aec4d08c61854f4664ca79ec2ba44ed092e9b967eaf61ed86c496d9c",
+          "subset": "2c19ce633d146e500d32efcf2b090cfcb2214f6b827e0856cbdfd04c597b8eca"
+        },
+        "outcomes_sha256": "98cbb055990edf0dcf3224e5a74007a598b6bfebf6c4d0de69e57a0ef5b45e60",
+        "correct": 997,
+        "metrics": {
+          "questions": 1468,
+          "accuracy": 0.6791553133514986,
+          "nll": 1.4523063285010362,
+          "brier": 0.5088781475171568,
+          "ece_10_bins": 0.20754826287624784,
+          "by_type": {
+            "choice": {
+              "questions": 756,
+              "accuracy": 0.6415343915343915,
+              "nll": 1.6689343920180666,
+              "brier": 0.5764132115538788,
+              "ece_10_bins": 0.23140760995053428,
+              "uniform_accuracy": 0.2312795669938527
+            },
+            "noul": {
+              "questions": 472,
+              "accuracy": 0.8220338983050848,
+              "nll": 0.9124050561308987,
+              "brier": 0.2924951114373343,
+              "ece_10_bins": 0.12612176888574989,
+              "uniform_accuracy": 0.5
+            },
+            "score": {
+              "questions": 240,
+              "accuracy": 0.5166666666666667,
+              "nll": 1.8317337640836608,
+              "brier": 0.7216960000918,
+              "ece_10_bins": 0.2959823129077752,
+              "uniform_accuracy": 0.2
+            }
+          }
+        },
+        "by_source": {
+          "agnews": {
+            "questions": 116,
+            "accuracy": 0.7672413793103449
+          },
+          "agnews_yn": {
+            "questions": 184,
+            "accuracy": 0.8695652173913043
+          },
+          "amazon": {
+            "questions": 80,
+            "accuracy": 0.5
+          },
+          "banking77": {
+            "questions": 116,
+            "accuracy": 0.6379310344827587
+          },
+          "boolq": {
+            "questions": 80,
+            "accuracy": 0.7125
+          },
+          "composition_atom": {
+            "questions": 16,
+            "accuracy": 0.5625
+          },
+          "composition_conditional": {
+            "questions": 16,
+            "accuracy": 0.625
+          },
+          "composition_conjunction": {
+            "questions": 16,
+            "accuracy": 0.6875
+          },
+          "composition_disjunction": {
+            "questions": 16,
+            "accuracy": 0.75
+          },
+          "composition_exception": {
+            "questions": 16,
+            "accuracy": 0.3125
+          },
+          "composition_negation": {
+            "questions": 16,
+            "accuracy": 0.25
+          },
+          "composition_nested_and": {
+            "questions": 16,
+            "accuracy": 0.75
+          },
+          "composition_nested_or": {
+            "questions": 16,
+            "accuracy": 0.5
+          },
+          "contrastive_age_eligibility": {
+            "questions": 24,
+            "accuracy": 0.5833333333333334
+          },
+          "contrastive_quantity_limit": {
+            "questions": 24,
+            "accuracy": 0.25
+          },
+          "contrastive_return_window": {
+            "questions": 24,
+            "accuracy": 0.625
+          },
+          "contrastive_spend_threshold": {
+            "questions": 24,
+            "accuracy": 0.5
+          },
+          "dbpedia14": {
+            "questions": 116,
+            "accuracy": 0.8879310344827587
+          },
+          "imdb": {
+            "questions": 80,
+            "accuracy": 0.8625
+          },
+          "mnli": {
+            "questions": 116,
+            "accuracy": 0.41379310344827586
+          },
+          "sst5": {
+            "questions": 80,
+            "accuracy": 0.5
+          },
+          "trec": {
+            "questions": 116,
+            "accuracy": 0.7068965517241379
+          },
+          "yelp": {
+            "questions": 80,
+            "accuracy": 0.55
+          },
+          "yelp_yn": {
+            "questions": 80,
+            "accuracy": 0.9125
+          }
+        },
+        "cache_parity": {
+          "questions": 48,
+          "argmax_disagreements": 0,
+          "max_probability_difference": 0.08055904507637024
+        },
+        "noul_predictions": {
+          "0": 291,
+          "1": 181
+        }
+      },
+      {
+        "seed": 43,
+        "adapter": "runs/state-screen-seed43-lower_state_lr/lower_state_lr/adapter.pt",
+        "sha256": {
+          "base": "eea4fbf9fee9624958f84de3a8e3fd55a1840d76e7be53e211618d48f3ce0e58",
+          "vocab": "e6dee3d4e31b4d5c40ac99508ac6c701ceef4bed681bf2167ce9a908552bca89",
+          "adapter": "fb3687c8f393c2a6aba591760bcc6945e2faa2803a626c89fb7f97fb154cdac7",
+          "train": "7ed5254b5cb5291baefaceb09edf7e13110258211518c8038f4a12c11bd628ad",
+          "data": "8d5765d7aec4d08c61854f4664ca79ec2ba44ed092e9b967eaf61ed86c496d9c",
+          "subset": "2c19ce633d146e500d32efcf2b090cfcb2214f6b827e0856cbdfd04c597b8eca"
+        },
+        "outcomes_sha256": "d4e8c06cafb7ea9c51d824dbacbc5f0243b23cac6c35909db5606a68a7ed1e4e",
+        "correct": 1005,
+        "metrics": {
+          "questions": 1468,
+          "accuracy": 0.6846049046321526,
+          "nll": 1.3829355458278898,
+          "brier": 0.5094123586884833,
+          "ece_10_bins": 0.21201977544852435,
+          "by_type": {
+            "choice": {
+              "questions": 756,
+              "accuracy": 0.6587301587301587,
+              "nll": 1.7205484413275756,
+              "brier": 0.5768624876058265,
+              "ece_10_bins": 0.24810910254480348,
+              "uniform_accuracy": 0.2312795669938527
+            },
+            "noul": {
+              "questions": 472,
+              "accuracy": 0.815677966101695,
+              "nll": 0.8127503048657558,
+              "brier": 0.30635271905536865,
+              "ece_10_bins": 0.1360372207679991,
+              "uniform_accuracy": 0.5
+            },
+            "score": {
+              "questions": 240,
+              "accuracy": 0.5083333333333333,
+              "nll": 1.4408192322294098,
+              "brier": 0.696295077210644,
+              "ece_10_bins": 0.26127022368212544,
+              "uniform_accuracy": 0.2
+            }
+          }
+        },
+        "by_source": {
+          "agnews": {
+            "questions": 116,
+            "accuracy": 0.7586206896551724
+          },
+          "agnews_yn": {
+            "questions": 184,
+            "accuracy": 0.8695652173913043
+          },
+          "amazon": {
+            "questions": 80,
+            "accuracy": 0.4625
+          },
+          "banking77": {
+            "questions": 116,
+            "accuracy": 0.6810344827586207
+          },
+          "boolq": {
+            "questions": 80,
+            "accuracy": 0.7125
+          },
+          "composition_atom": {
+            "questions": 16,
+            "accuracy": 0.6875
+          },
+          "composition_conditional": {
+            "questions": 16,
+            "accuracy": 0.5
+          },
+          "composition_conjunction": {
+            "questions": 16,
+            "accuracy": 0.6875
+          },
+          "composition_disjunction": {
+            "questions": 16,
+            "accuracy": 0.4375
+          },
+          "composition_exception": {
+            "questions": 16,
+            "accuracy": 0.625
+          },
+          "composition_negation": {
+            "questions": 16,
+            "accuracy": 0.375
+          },
+          "composition_nested_and": {
+            "questions": 16,
+            "accuracy": 0.625
+          },
+          "composition_nested_or": {
+            "questions": 16,
+            "accuracy": 0.375
+          },
+          "contrastive_age_eligibility": {
+            "questions": 24,
+            "accuracy": 0.5
+          },
+          "contrastive_quantity_limit": {
+            "questions": 24,
+            "accuracy": 0.25
+          },
+          "contrastive_return_window": {
+            "questions": 24,
+            "accuracy": 0.5
+          },
+          "contrastive_spend_threshold": {
+            "questions": 24,
+            "accuracy": 0.5416666666666666
+          },
+          "dbpedia14": {
+            "questions": 116,
+            "accuracy": 0.8706896551724138
+          },
+          "imdb": {
+            "questions": 80,
+            "accuracy": 0.8625
+          },
+          "mnli": {
+            "questions": 116,
+            "accuracy": 0.47413793103448276
+          },
+          "sst5": {
+            "questions": 80,
+            "accuracy": 0.5
+          },
+          "trec": {
+            "questions": 116,
+            "accuracy": 0.75
+          },
+          "yelp": {
+            "questions": 80,
+            "accuracy": 0.5625
+          },
+          "yelp_yn": {
+            "questions": 80,
+            "accuracy": 0.9375
+          }
+        },
+        "cache_parity": {
+          "questions": 48,
+          "argmax_disagreements": 0,
+          "max_probability_difference": 0.09616640210151672
+        },
+        "noul_predictions": {
+          "0": 306,
+          "1": 166
+        }
+      },
+      {
+        "seed": 44,
+        "adapter": "runs/state-screen-seed44-lower_state_lr/lower_state_lr/adapter.pt",
+        "sha256": {
+          "base": "eea4fbf9fee9624958f84de3a8e3fd55a1840d76e7be53e211618d48f3ce0e58",
+          "vocab": "e6dee3d4e31b4d5c40ac99508ac6c701ceef4bed681bf2167ce9a908552bca89",
+          "adapter": "eb33534adf45c5661d184bd76d2cff1ac4f0282420d352b1953b25ee8bfb1140",
+          "train": "7ed5254b5cb5291baefaceb09edf7e13110258211518c8038f4a12c11bd628ad",
+          "data": "8d5765d7aec4d08c61854f4664ca79ec2ba44ed092e9b967eaf61ed86c496d9c",
+          "subset": "2c19ce633d146e500d32efcf2b090cfcb2214f6b827e0856cbdfd04c597b8eca"
+        },
+        "outcomes_sha256": "8315643ce480ec09112b50ee86f29a3a7a78d9bef4a1a995c9eafcfa68818fe2",
+        "correct": 1010,
+        "metrics": {
+          "questions": 1468,
+          "accuracy": 0.6880108991825613,
+          "nll": 1.3358017571968697,
+          "brier": 0.5025340225729827,
+          "ece_10_bins": 0.21125124845582716,
+          "by_type": {
+            "choice": {
+              "questions": 756,
+              "accuracy": 0.6574074074074074,
+              "nll": 1.6139779316147278,
+              "brier": 0.577903441408695,
+              "ece_10_bins": 0.2580781968891936,
+              "uniform_accuracy": 0.2312795669938527
+            },
+            "noul": {
+              "questions": 472,
+              "accuracy": 0.8199152542372882,
+              "nll": 0.73356337215119,
+              "brier": 0.28028623124453395,
+              "ece_10_bins": 0.11135778424598403,
+              "uniform_accuracy": 0.5
+            },
+            "score": {
+              "questions": 240,
+              "accuracy": 0.525,
+              "nll": 1.643948965037119,
+              "brier": 0.7022076761864385,
+              "ece_10_bins": 0.2763058591634035,
+              "uniform_accuracy": 0.2
+            }
+          }
+        },
+        "by_source": {
+          "agnews": {
+            "questions": 116,
+            "accuracy": 0.7758620689655172
+          },
+          "agnews_yn": {
+            "questions": 184,
+            "accuracy": 0.8695652173913043
+          },
+          "amazon": {
+            "questions": 80,
+            "accuracy": 0.5125
+          },
+          "banking77": {
+            "questions": 116,
+            "accuracy": 0.6293103448275862
+          },
+          "boolq": {
+            "questions": 80,
+            "accuracy": 0.7
+          },
+          "composition_atom": {
+            "questions": 16,
+            "accuracy": 0.375
+          },
+          "composition_conditional": {
+            "questions": 16,
+            "accuracy": 0.625
+          },
+          "composition_conjunction": {
+            "questions": 16,
+            "accuracy": 0.375
+          },
+          "composition_disjunction": {
+            "questions": 16,
+            "accuracy": 0.75
+          },
+          "composition_exception": {
+            "questions": 16,
+            "accuracy": 0.375
+          },
+          "composition_negation": {
+            "questions": 16,
+            "accuracy": 0.5
+          },
+          "composition_nested_and": {
+            "questions": 16,
+            "accuracy": 0.375
+          },
+          "composition_nested_or": {
+            "questions": 16,
+            "accuracy": 0.625
+          },
+          "contrastive_age_eligibility": {
+            "questions": 24,
+            "accuracy": 0.8333333333333334
+          },
+          "contrastive_quantity_limit": {
+            "questions": 24,
+            "accuracy": 0.25
+          },
+          "contrastive_return_window": {
+            "questions": 24,
+            "accuracy": 0.5
+          },
+          "contrastive_spend_threshold": {
+            "questions": 24,
+            "accuracy": 0.5416666666666666
+          },
+          "dbpedia14": {
+            "questions": 116,
+            "accuracy": 0.8706896551724138
+          },
+          "imdb": {
+            "questions": 80,
+            "accuracy": 0.875
+          },
+          "mnli": {
+            "questions": 116,
+            "accuracy": 0.4827586206896552
+          },
+          "sst5": {
+            "questions": 80,
+            "accuracy": 0.475
+          },
+          "trec": {
+            "questions": 116,
+            "accuracy": 0.8103448275862069
+          },
+          "yelp": {
+            "questions": 80,
+            "accuracy": 0.5875
+          },
+          "yelp_yn": {
+            "questions": 80,
+            "accuracy": 0.8625
+          }
+        },
+        "cache_parity": {
+          "questions": 48,
+          "argmax_disagreements": 0,
+          "max_probability_difference": 0.08544480800628662
+        },
+        "noul_predictions": {
+          "0": 272,
+          "1": 200
+        }
+      }
+    ],
+    "pathwise": [
+      {
+        "seed": 42,
+        "adapter": "runs/policy-screen-seed42-pathwise/pathwise/adapter.pt",
+        "sha256": {
+          "base": "eea4fbf9fee9624958f84de3a8e3fd55a1840d76e7be53e211618d48f3ce0e58",
+          "vocab": "e6dee3d4e31b4d5c40ac99508ac6c701ceef4bed681bf2167ce9a908552bca89",
+          "adapter": "04bf9901b7e79913d2ba66ed242697d6b4a5fce45829d4a7673d4af1efa3f940",
+          "train": "7ed5254b5cb5291baefaceb09edf7e13110258211518c8038f4a12c11bd628ad",
+          "data": "8d5765d7aec4d08c61854f4664ca79ec2ba44ed092e9b967eaf61ed86c496d9c",
+          "subset": "2c19ce633d146e500d32efcf2b090cfcb2214f6b827e0856cbdfd04c597b8eca"
+        },
+        "outcomes_sha256": "3c3889d4908cd89efc9663f5beb09ef45511afd9c8431bf8fa51cb2a2f93108c",
+        "correct": 1006,
+        "metrics": {
+          "questions": 1468,
+          "accuracy": 0.6852861035422343,
+          "nll": 1.3078540102893468,
+          "brier": 0.4835125840877016,
+          "ece_10_bins": 0.18619445454562716,
+          "by_type": {
+            "choice": {
+              "questions": 756,
+              "accuracy": 0.6507936507936508,
+              "nll": 1.5127263161137647,
+              "brier": 0.5319076129156293,
+              "ece_10_bins": 0.2012796455787288,
+              "uniform_accuracy": 0.2312795669938527
+            },
+            "noul": {
+              "questions": 472,
+              "accuracy": 0.8326271186440678,
+              "nll": 0.744616353628003,
+              "brier": 0.2740525070991666,
+              "ece_10_bins": 0.11650688062279911,
+              "uniform_accuracy": 0.5
+            },
+            "score": {
+              "questions": 240,
+              "accuracy": 0.5041666666666667,
+              "nll": 1.7702069717097402,
+              "brier": 0.7430063946905143,
+              "ece_10_bins": 0.30020153758426504,
+              "uniform_accuracy": 0.2
+            }
+          }
+        },
+        "by_source": {
+          "agnews": {
+            "questions": 116,
+            "accuracy": 0.7931034482758621
+          },
+          "agnews_yn": {
+            "questions": 184,
+            "accuracy": 0.8804347826086957
+          },
+          "amazon": {
+            "questions": 80,
+            "accuracy": 0.4875
+          },
+          "banking77": {
+            "questions": 116,
+            "accuracy": 0.603448275862069
+          },
+          "boolq": {
+            "questions": 80,
+            "accuracy": 0.6875
+          },
+          "composition_atom": {
+            "questions": 16,
+            "accuracy": 0.4375
+          },
+          "composition_conditional": {
+            "questions": 16,
+            "accuracy": 0.625
+          },
+          "composition_conjunction": {
+            "questions": 16,
+            "accuracy": 0.8125
+          },
+          "composition_disjunction": {
+            "questions": 16,
+            "accuracy": 0.5
+          },
+          "composition_exception": {
+            "questions": 16,
+            "accuracy": 0.5625
+          },
+          "composition_negation": {
+            "questions": 16,
+            "accuracy": 0.5
+          },
+          "composition_nested_and": {
+            "questions": 16,
+            "accuracy": 0.625
+          },
+          "composition_nested_or": {
+            "questions": 16,
+            "accuracy": 0.5
+          },
+          "contrastive_age_eligibility": {
+            "questions": 24,
+            "accuracy": 0.875
+          },
+          "contrastive_quantity_limit": {
+            "questions": 24,
+            "accuracy": 0.25
+          },
+          "contrastive_return_window": {
+            "questions": 24,
+            "accuracy": 0.5
+          },
+          "contrastive_spend_threshold": {
+            "questions": 24,
+            "accuracy": 0.5833333333333334
+          },
+          "dbpedia14": {
+            "questions": 116,
+            "accuracy": 0.896551724137931
+          },
+          "imdb": {
+            "questions": 80,
+            "accuracy": 0.875
+          },
+          "mnli": {
+            "questions": 116,
+            "accuracy": 0.4051724137931034
+          },
+          "sst5": {
+            "questions": 80,
+            "accuracy": 0.4875
+          },
+          "trec": {
+            "questions": 116,
+            "accuracy": 0.7413793103448276
+          },
+          "yelp": {
+            "questions": 80,
+            "accuracy": 0.5375
+          },
+          "yelp_yn": {
+            "questions": 80,
+            "accuracy": 0.9125
+          }
+        },
+        "cache_parity": {
+          "questions": 48,
+          "argmax_disagreements": 1,
+          "max_probability_difference": 0.09797412157058716
+        },
+        "noul_predictions": {
+          "0": 266,
+          "1": 206
+        },
+        "manifest_sha256": "b95f835fc39de79a82c5e93b7b6f5355500a34484007820fdb1b77fc948e9fb1",
+        "training_summary": {
+          "adapter": "/root/x/Gut-RWKV/runs/policy-screen-seed42-pathwise/pathwise/adapter.pt",
+          "steps": 1536,
+          "final_training_loss": 0.5014422535896301,
+          "initial_state_norm": 1.653228759765625
+        }
+      },
+      {
+        "seed": 43,
+        "adapter": "runs/policy-screen-seed43-pathwise/pathwise/adapter.pt",
+        "sha256": {
+          "base": "eea4fbf9fee9624958f84de3a8e3fd55a1840d76e7be53e211618d48f3ce0e58",
+          "vocab": "e6dee3d4e31b4d5c40ac99508ac6c701ceef4bed681bf2167ce9a908552bca89",
+          "adapter": "528fef459535ef138e261f67ea747b9df11194528e55319fb4377b91bb54d675",
+          "train": "7ed5254b5cb5291baefaceb09edf7e13110258211518c8038f4a12c11bd628ad",
+          "data": "8d5765d7aec4d08c61854f4664ca79ec2ba44ed092e9b967eaf61ed86c496d9c",
+          "subset": "2c19ce633d146e500d32efcf2b090cfcb2214f6b827e0856cbdfd04c597b8eca"
+        },
+        "outcomes_sha256": "285aef09c82f60365a5b25c76622cc944852d03985205bdc5f92e85e4c81ab7f",
+        "correct": 1014,
+        "metrics": {
+          "questions": 1468,
+          "accuracy": 0.6907356948228883,
+          "nll": 1.2612248004517999,
+          "brier": 0.5013321658569546,
+          "ece_10_bins": 0.20195892691734052,
+          "by_type": {
+            "choice": {
+              "questions": 756,
+              "accuracy": 0.6732804232804233,
+              "nll": 1.4531090505962878,
+              "brier": 0.5549671739592074,
+              "ece_10_bins": 0.2308196604606651,
+              "uniform_accuracy": 0.2312795669938527
+            },
+            "noul": {
+              "questions": 472,
+              "accuracy": 0.8177966101694916,
+              "nll": 0.8411967539985342,
+              "brier": 0.31660439233323506,
+              "ece_10_bins": 0.14282564275850684,
+              "uniform_accuracy": 0.5
+            },
+            "score": {
+              "questions": 240,
+              "accuracy": 0.49583333333333335,
+              "nll": 1.4828445705214184,
+              "brier": 0.6956798449315073,
+              "ece_10_bins": 0.2543726708739996,
+              "uniform_accuracy": 0.2
+            }
+          }
+        },
+        "by_source": {
+          "agnews": {
+            "questions": 116,
+            "accuracy": 0.7672413793103449
+          },
+          "agnews_yn": {
+            "questions": 184,
+            "accuracy": 0.8913043478260869
+          },
+          "amazon": {
+            "questions": 80,
+            "accuracy": 0.4375
+          },
+          "banking77": {
+            "questions": 116,
+            "accuracy": 0.6982758620689655
+          },
+          "boolq": {
+            "questions": 80,
+            "accuracy": 0.675
+          },
+          "composition_atom": {
+            "questions": 16,
+            "accuracy": 0.625
+          },
+          "composition_conditional": {
+            "questions": 16,
+            "accuracy": 0.5
+          },
+          "composition_conjunction": {
+            "questions": 16,
+            "accuracy": 0.625
+          },
+          "composition_disjunction": {
+            "questions": 16,
+            "accuracy": 0.25
+          },
+          "composition_exception": {
+            "questions": 16,
+            "accuracy": 0.625
+          },
+          "composition_negation": {
+            "questions": 16,
+            "accuracy": 0.5
+          },
+          "composition_nested_and": {
+            "questions": 16,
+            "accuracy": 0.625
+          },
+          "composition_nested_or": {
+            "questions": 16,
+            "accuracy": 0.375
+          },
+          "contrastive_age_eligibility": {
+            "questions": 24,
+            "accuracy": 0.5
+          },
+          "contrastive_quantity_limit": {
+            "questions": 24,
+            "accuracy": 0.25
+          },
+          "contrastive_return_window": {
+            "questions": 24,
+            "accuracy": 0.5
+          },
+          "contrastive_spend_threshold": {
+            "questions": 24,
+            "accuracy": 0.6666666666666666
+          },
+          "dbpedia14": {
+            "questions": 116,
+            "accuracy": 0.896551724137931
+          },
+          "imdb": {
+            "questions": 80,
+            "accuracy": 0.8875
+          },
+          "mnli": {
+            "questions": 116,
+            "accuracy": 0.5
+          },
+          "sst5": {
+            "questions": 80,
+            "accuracy": 0.5
+          },
+          "trec": {
+            "questions": 116,
+            "accuracy": 0.7672413793103449
+          },
+          "yelp": {
+            "questions": 80,
+            "accuracy": 0.55
+          },
+          "yelp_yn": {
+            "questions": 80,
+            "accuracy": 0.9125
+          }
+        },
+        "cache_parity": {
+          "questions": 48,
+          "argmax_disagreements": 2,
+          "max_probability_difference": 0.11804342269897461
+        },
+        "noul_predictions": {
+          "0": 337,
+          "1": 135
+        },
+        "manifest_sha256": "a4b3f0da4005cd9dcbc5eb99a405595c076b7c0556b180219269336f4930e490",
+        "training_summary": {
+          "adapter": "/root/x/Gut-RWKV/runs/policy-screen-seed43-pathwise/pathwise/adapter.pt",
+          "steps": 1536,
+          "final_training_loss": -0.4757690727710724,
+          "initial_state_norm": 1.5485903024673462
+        }
+      },
+      {
+        "seed": 44,
+        "adapter": "runs/policy-screen-seed44-pathwise/pathwise/adapter.pt",
+        "sha256": {
+          "base": "eea4fbf9fee9624958f84de3a8e3fd55a1840d76e7be53e211618d48f3ce0e58",
+          "vocab": "e6dee3d4e31b4d5c40ac99508ac6c701ceef4bed681bf2167ce9a908552bca89",
+          "adapter": "5c6c7e69c8b3333151ead08103f7bb8c2afb8ed3dbf945c433e437f42f45161e",
+          "train": "7ed5254b5cb5291baefaceb09edf7e13110258211518c8038f4a12c11bd628ad",
+          "data": "8d5765d7aec4d08c61854f4664ca79ec2ba44ed092e9b967eaf61ed86c496d9c",
+          "subset": "2c19ce633d146e500d32efcf2b090cfcb2214f6b827e0856cbdfd04c597b8eca"
+        },
+        "outcomes_sha256": "d6403cf05b96360f7af2059e29669353d619ceb42d2db9a17d01e3b2fbbfd34c",
+        "correct": 1014,
+        "metrics": {
+          "questions": 1468,
+          "accuracy": 0.6907356948228883,
+          "nll": 1.5292070856243412,
+          "brier": 0.501831649312951,
+          "ece_10_bins": 0.20956192158507717,
+          "by_type": {
+            "choice": {
+              "questions": 756,
+              "accuracy": 0.6468253968253969,
+              "nll": 1.8012551296284318,
+              "brier": 0.5861798236786682,
+              "ece_10_bins": 0.26018845481137753,
+              "uniform_accuracy": 0.2312795669938527
+            },
+            "noul": {
+              "questions": 472,
+              "accuracy": 0.8389830508474576,
+              "nll": 0.9245620346066856,
+              "brier": 0.2767937693122912,
+              "ece_10_bins": 0.11155227016089325,
+              "uniform_accuracy": 0.5
+            },
+            "score": {
+              "questions": 240,
+              "accuracy": 0.5375,
+              "nll": 1.861391014012845,
+              "brier": 0.6787093973955726,
+              "ece_10_bins": 0.25604030961791674,
+              "uniform_accuracy": 0.2
+            }
+          }
+        },
+        "by_source": {
+          "agnews": {
+            "questions": 116,
+            "accuracy": 0.7931034482758621
+          },
+          "agnews_yn": {
+            "questions": 184,
+            "accuracy": 0.8641304347826086
+          },
+          "amazon": {
+            "questions": 80,
+            "accuracy": 0.5
+          },
+          "banking77": {
+            "questions": 116,
+            "accuracy": 0.646551724137931
+          },
+          "boolq": {
+            "questions": 80,
+            "accuracy": 0.75
+          },
+          "composition_atom": {
+            "questions": 16,
+            "accuracy": 0.375
+          },
+          "composition_conditional": {
+            "questions": 16,
+            "accuracy": 0.625
+          },
+          "composition_conjunction": {
+            "questions": 16,
+            "accuracy": 0.4375
+          },
+          "composition_disjunction": {
+            "questions": 16,
+            "accuracy": 0.75
+          },
+          "composition_exception": {
+            "questions": 16,
+            "accuracy": 0.125
+          },
+          "composition_negation": {
+            "questions": 16,
+            "accuracy": 0.5
+          },
+          "composition_nested_and": {
+            "questions": 16,
+            "accuracy": 0.375
+          },
+          "composition_nested_or": {
+            "questions": 16,
+            "accuracy": 0.625
+          },
+          "contrastive_age_eligibility": {
+            "questions": 24,
+            "accuracy": 0.9166666666666666
+          },
+          "contrastive_quantity_limit": {
+            "questions": 24,
+            "accuracy": 0.25
+          },
+          "contrastive_return_window": {
+            "questions": 24,
+            "accuracy": 0.5416666666666666
+          },
+          "contrastive_spend_threshold": {
+            "questions": 24,
+            "accuracy": 0.75
+          },
+          "dbpedia14": {
+            "questions": 116,
+            "accuracy": 0.896551724137931
+          },
+          "imdb": {
+            "questions": 80,
+            "accuracy": 0.8625
+          },
+          "mnli": {
+            "questions": 116,
+            "accuracy": 0.35344827586206895
+          },
+          "sst5": {
+            "questions": 80,
+            "accuracy": 0.5
+          },
+          "trec": {
+            "questions": 116,
+            "accuracy": 0.7931034482758621
+          },
+          "yelp": {
+            "questions": 80,
+            "accuracy": 0.6125
+          },
+          "yelp_yn": {
+            "questions": 80,
+            "accuracy": 0.9125
+          }
+        },
+        "cache_parity": {
+          "questions": 48,
+          "argmax_disagreements": 1,
+          "max_probability_difference": 0.15197882056236267
+        },
+        "noul_predictions": {
+          "0": 295,
+          "1": 177
+        },
+        "manifest_sha256": "88276beb4e5ca32cff306e3630fb5b7f3ddb6b2cd95431dc5775c3f82527aab4",
+        "training_summary": {
+          "adapter": "/root/x/Gut-RWKV/runs/policy-screen-seed44-pathwise/pathwise/adapter.pt",
+          "steps": 1536,
+          "final_training_loss": -0.49999862909317017,
+          "initial_state_norm": 1.5150365829467773
+        }
+      }
+    ]
+  },
+  "paired_comparisons": [
+    {
+      "seed": 42,
+      "pathwise_gained": 73,
+      "pathwise_lost": 64
+    },
+    {
+      "seed": 43,
+      "pathwise_gained": 76,
+      "pathwise_lost": 67
+    },
+    {
+      "seed": 44,
+      "pathwise_gained": 83,
+      "pathwise_lost": 79
+    }
+  ],
+  "code_sha256": {
+    "/root/x/Gut-RWKV/rwkv_jev/__init__.py": "4dc2b247a42304fed1b3dd2dde8a7d8ba76f7086650e9a23878b13a8237aaf7a",
+    "/root/x/Gut-RWKV/rwkv_jev/backbone/__init__.py": "74ed712eeab84c1120ef615f161276a7023b5d33175fccb87cd9905565e97275",
+    "/root/x/Gut-RWKV/rwkv_jev/backbone/cuda/wkv7_state.cpp": "d09a1916e35a6baacd2f31ddebf9f81ff7b059ab6e17b4115d83a1c77ded8192",
+    "/root/x/Gut-RWKV/rwkv_jev/backbone/cuda/wkv7_state.cu": "ffe1e64352d69a8f834d6dd1f9f1a0ed68abed2573e5f132fb1a47e95ffb3130",
+    "/root/x/Gut-RWKV/rwkv_jev/backbone/rwkv7.py": "b72fadf61f860e5abbeea3e6f42cf765c1faa7940f69dfb539c059250c830afc",
+    "/root/x/Gut-RWKV/rwkv_jev/backbone/wkv7_kernel.py": "3b40edaaec22c2d09abc67a9b150a728ed3a431089716c9c15378a777e2b8410",
+    "/root/x/Gut-RWKV/rwkv_jev/cli.py": "f604239b052bc96a09cdc00911c0dec6e75b5d52c8de9a86dab68ceaf793ba2c",
+    "/root/x/Gut-RWKV/rwkv_jev/model.py": "72398729b600343103f9549993551febcd676d94517338a3bc1be8074c78bd43",
+    "/root/x/Gut-RWKV/rwkv_jev/schema.py": "8e9483e3ae4229948f0019f4efa2f28faf6bc057edeb197a05bd5f51b8465597",
+    "/root/x/Gut-RWKV/rwkv_jev/server.py": "1ebf6ad9c35f69199561ba492287971dcb581a52d94f15dc228dcf89c60ac619",
+    "/root/x/Gut-RWKV/scripts/audit_decisions.py": "fb8d43f856b4f19afd037c6dd9ecbe9e0adfa727189aa53cb7d3da339fb9d4cf",
+    "/root/x/Gut-RWKV/scripts/benchmark_branches.py": "8648e7d8cb84fead0165ab3ae4dc81362c240780a22b590b4a6afc7da2a2a0c6",
+    "/root/x/Gut-RWKV/scripts/download_g1k.py": "d9c73ba35e41956c53e156e37269c5c0efe388ee0e56ed31b791741cc1fdd556",
+    "/root/x/Gut-RWKV/scripts/evaluate_checkpoints.py": "4ee0100b3d92d7318323395131c966585cbafb0ba7a6b4491b0089688ee78519",
+    "/root/x/Gut-RWKV/scripts/prepare_pilot.py": "92df71763e62fb5e68c499745916684b0ebea9764d6a939e57f0ef468520db60",
+    "/root/x/Gut-RWKV/scripts/state_screen.py": "483db27b39f16851f942d977b4b356e8d0c1306566bd603ecca63feda667e720"
+  },
+  "input_sha256": {
+    "/root/x/models/rwkv7/rwkv-g1k-3b-temp-5441.pth": "eea4fbf9fee9624958f84de3a8e3fd55a1840d76e7be53e211618d48f3ce0e58",
+    "/root/x/models/rwkv7/rwkv_vocab_v20230424.txt": "e6dee3d4e31b4d5c40ac99508ac6c701ceef4bed681bf2167ce9a908552bca89",
+    "/root/x/Gut-RWKV/runs/pilot-data/upstream-train.jsonl": "7ed5254b5cb5291baefaceb09edf7e13110258211518c8038f4a12c11bd628ad",
+    "/root/x/Gut-RWKV/runs/pilot-data/upstream-development.jsonl": "8d5765d7aec4d08c61854f4664ca79ec2ba44ed092e9b967eaf61ed86c496d9c",
+    "/root/x/Gut-RWKV/runs/pilot-data/development.jsonl": "2c19ce633d146e500d32efcf2b090cfcb2214f6b827e0856cbdfd04c597b8eca"
+  },
+  "settings": {
+    "head_lr": 0.0001,
+    "state_lr": 0.00001,
+    "policy_samples": 32,
+    "exploration_std": 0.05,
+    "spherical_weight": 0.5,
+    "rps_weight": 0.5,
+    "rps_types": [
+      "score"
+    ],
+    "sampling": "natural",
+    "checkpoint_every": 384
+  },
+  "aggregate": {
+    "cross_entropy": {
+      "accuracy": {
+        "mean": 0.6839237057220708,
+        "sample_sd": 0.00446691997568259
+      },
+      "nll": {
+        "mean": 1.3903478771752653,
+        "sample_sd": 0.058604912555982644
+      },
+      "brier": {
+        "mean": 0.5069415095928743,
+        "sample_sd": 0.0038263300650593158
+      },
+      "ece_10_bins": {
+        "mean": 0.2102730955935331,
+        "sample_sd": 0.002390856214312616
+      }
+    },
+    "pathwise": {
+      "accuracy": {
+        "mean": 0.6889191643960036,
+        "sample_sd": 0.0031463229928590424
+      },
+      "nll": {
+        "mean": 1.366095298788496,
+        "sample_sd": 0.14317004594573948
+      },
+      "brier": {
+        "mean": 0.49555879975253575,
+        "sample_sd": 0.010435317667108899
+      },
+      "ece_10_bins": {
+        "mean": 0.1992384343493483,
+        "sample_sd": 0.011918910974553058
+      }
+    }
+  },
+  "limitations": [
+    "Three seeds reuse the same questions; they do not provide 4404 independent test examples.",
+    "Pathwise gains 9, 9 and 4 correct answers versus matched seed cross-entropy. This is a small development gain.",
+    "Mean NLL improves but seed44 NLL worsens; calibration is not resolved.",
+    "Pathwise has cached/full-sequence argmax differences on 1, 2 and 1 of 48 probes. Primary metrics use cached inference.",
+    "No new benchmark data was evaluated. The seed42 public JevBench results remain CE 56/72 versus pathwise 55/72.",
+    "This replicates differentiable pathwise reward optimization, not REINFORCE or Laya.",
+    "Historical cross-entropy controls are reused; their objective differs and they predate the policy implementation."
+  ]
+}

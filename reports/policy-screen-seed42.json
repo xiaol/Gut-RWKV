@@ -1,0 +1,1181 @@
+{
+  "protocol": "Matched Gaussian REINFORCE versus pathwise estimator, seed 42, fixed final 1536 updates; development only.",
+  "settings": {
+    "seed": 42,
+    "updates": 1536,
+    "head_lr": 0.0001,
+    "state_lr": 0.00001,
+    "policy_samples": 32,
+    "antithetic_pairs": 16,
+    "exploration_std": 0.05,
+    "spherical_weight": 0.5,
+    "rps_weight": 0.5,
+    "rps_types": [
+      "score"
+    ],
+    "reward_log": "stable log_softmax",
+    "sampling": "natural",
+    "checkpoint_every": 384
+  },
+  "code_sha256": {
+    "/root/x/Gut-RWKV/rwkv_jev/__init__.py": "4dc2b247a42304fed1b3dd2dde8a7d8ba76f7086650e9a23878b13a8237aaf7a",
+    "/root/x/Gut-RWKV/rwkv_jev/backbone/__init__.py": "74ed712eeab84c1120ef615f161276a7023b5d33175fccb87cd9905565e97275",
+    "/root/x/Gut-RWKV/rwkv_jev/backbone/cuda/wkv7_state.cpp": "d09a1916e35a6baacd2f31ddebf9f81ff7b059ab6e17b4115d83a1c77ded8192",
+    "/root/x/Gut-RWKV/rwkv_jev/backbone/cuda/wkv7_state.cu": "ffe1e64352d69a8f834d6dd1f9f1a0ed68abed2573e5f132fb1a47e95ffb3130",
+    "/root/x/Gut-RWKV/rwkv_jev/backbone/rwkv7.py": "b72fadf61f860e5abbeea3e6f42cf765c1faa7940f69dfb539c059250c830afc",
+    "/root/x/Gut-RWKV/rwkv_jev/backbone/wkv7_kernel.py": "3b40edaaec22c2d09abc67a9b150a728ed3a431089716c9c15378a777e2b8410",
+    "/root/x/Gut-RWKV/rwkv_jev/cli.py": "f604239b052bc96a09cdc00911c0dec6e75b5d52c8de9a86dab68ceaf793ba2c",
+    "/root/x/Gut-RWKV/rwkv_jev/model.py": "72398729b600343103f9549993551febcd676d94517338a3bc1be8074c78bd43",
+    "/root/x/Gut-RWKV/rwkv_jev/schema.py": "8e9483e3ae4229948f0019f4efa2f28faf6bc057edeb197a05bd5f51b8465597",
+    "/root/x/Gut-RWKV/rwkv_jev/server.py": "1ebf6ad9c35f69199561ba492287971dcb581a52d94f15dc228dcf89c60ac619",
+    "/root/x/Gut-RWKV/scripts/audit_decisions.py": "fb8d43f856b4f19afd037c6dd9ecbe9e0adfa727189aa53cb7d3da339fb9d4cf",
+    "/root/x/Gut-RWKV/scripts/benchmark_branches.py": "8648e7d8cb84fead0165ab3ae4dc81362c240780a22b590b4a6afc7da2a2a0c6",
+    "/root/x/Gut-RWKV/scripts/download_g1k.py": "d9c73ba35e41956c53e156e37269c5c0efe388ee0e56ed31b791741cc1fdd556",
+    "/root/x/Gut-RWKV/scripts/evaluate_checkpoints.py": "4ee0100b3d92d7318323395131c966585cbafb0ba7a6b4491b0089688ee78519",
+    "/root/x/Gut-RWKV/scripts/prepare_pilot.py": "92df71763e62fb5e68c499745916684b0ebea9764d6a939e57f0ef468520db60",
+    "/root/x/Gut-RWKV/scripts/state_screen.py": "483db27b39f16851f942d977b4b356e8d0c1306566bd603ecca63feda667e720"
+  },
+  "limitations": [
+    "One seed on reused development; not JevBench and not an official rank.",
+    "Fresh initialization; not RL fine-tuning from a supervised adapter.",
+    "REINFORCE acts on Gaussian logit vectors, not categorical or generated-token actions.",
+    "Known differentiable reward; independent experiment, not Laya or private TypeSafe recipe parity.",
+    "Historical cross-entropy and proper-score references change reward as well as estimator.",
+    "Legacy proper scoring applies ordinal RPS to all candidate types and clamps log probabilities.",
+    "Only final-step checkpoints are compared; no intermediate selection or calibration fitting.",
+    "Limited parity probes do not establish exact cached/full-sequence equivalence."
+  ],
+  "arms": {
+    "cross_entropy": {
+      "adapter": "/root/x/Gut-RWKV/runs/state-screen-v1-lower_state_lr/lower_state_lr/adapter.pt",
+      "evaluation": "runs/state-screen-v1-lower_state_lr/lower_state_lr/development.json",
+      "sha256": {
+        "base": "eea4fbf9fee9624958f84de3a8e3fd55a1840d76e7be53e211618d48f3ce0e58",
+        "vocab": "e6dee3d4e31b4d5c40ac99508ac6c701ceef4bed681bf2167ce9a908552bca89",
+        "adapter": "a7aa0dc1b07d01c19ca568d17481114f56e436865229fd575c1f715a04ea9407",
+        "train": "7ed5254b5cb5291baefaceb09edf7e13110258211518c8038f4a12c11bd628ad",
+        "data": "8d5765d7aec4d08c61854f4664ca79ec2ba44ed092e9b967eaf61ed86c496d9c",
+        "subset": "2c19ce633d146e500d32efcf2b090cfcb2214f6b827e0856cbdfd04c597b8eca"
+      },
+      "evaluation_sha256": "fba60e118cabdda113fa0696beaf8611a1f9b972e98002ac7e1333ba2c76a4d8",
+      "outcomes_sha256": "98cbb055990edf0dcf3224e5a74007a598b6bfebf6c4d0de69e57a0ef5b45e60",
+      "metadata": {
+        "base_sha256": "eea4fbf9fee9624958f84de3a8e3fd55a1840d76e7be53e211618d48f3ce0e58",
+        "vocab_sha256": "e6dee3d4e31b4d5c40ac99508ac6c701ceef4bed681bf2167ce9a908552bca89",
+        "data_sha256": "7ed5254b5cb5291baefaceb09edf7e13110258211518c8038f4a12c11bd628ad",
+        "seed": 42,
+        "lr": 0.0001,
+        "dtype": "bfloat16",
+        "epochs": 1,
+        "head_initialization": "before_lora",
+        "base": "/root/x/models/rwkv7/rwkv-g1k-3b-temp-5441.pth",
+        "state_lr": 0.00001,
+        "state_max_norm": null,
+        "sampling": "natural",
+        "max_steps": 1536
+      },
+      "trained_steps": 1536,
+      "correct": 997,
+      "metrics": {
+        "questions": 1468,
+        "accuracy": 0.6791553133514986,
+        "nll": 1.4523063285010362,
+        "brier": 0.5088781475171568,
+        "ece_10_bins": 0.20754826287624784,
+        "by_type": {
+          "choice": {
+            "questions": 756,
+            "accuracy": 0.6415343915343915,
+            "nll": 1.6689343920180666,
+            "brier": 0.5764132115538788,
+            "ece_10_bins": 0.23140760995053428,
+            "uniform_accuracy": 0.2312795669938527
+          },
+          "noul": {
+            "questions": 472,
+            "accuracy": 0.8220338983050848,
+            "nll": 0.9124050561308987,
+            "brier": 0.2924951114373343,
+            "ece_10_bins": 0.12612176888574989,
+            "uniform_accuracy": 0.5
+          },
+          "score": {
+            "questions": 240,
+            "accuracy": 0.5166666666666667,
+            "nll": 1.8317337640836608,
+            "brier": 0.7216960000918,
+            "ece_10_bins": 0.2959823129077752,
+            "uniform_accuracy": 0.2
+          }
+        }
+      },
+      "by_source": {
+        "agnews": {
+          "questions": 116,
+          "accuracy": 0.7672413793103449
+        },
+        "agnews_yn": {
+          "questions": 184,
+          "accuracy": 0.8695652173913043
+        },
+        "amazon": {
+          "questions": 80,
+          "accuracy": 0.5
+        },
+        "banking77": {
+          "questions": 116,
+          "accuracy": 0.6379310344827587
+        },
+        "boolq": {
+          "questions": 80,
+          "accuracy": 0.7125
+        },
+        "composition_atom": {
+          "questions": 16,
+          "accuracy": 0.5625
+        },
+        "composition_conditional": {
+          "questions": 16,
+          "accuracy": 0.625
+        },
+        "composition_conjunction": {
+          "questions": 16,
+          "accuracy": 0.6875
+        },
+        "composition_disjunction": {
+          "questions": 16,
+          "accuracy": 0.75
+        },
+        "composition_exception": {
+          "questions": 16,
+          "accuracy": 0.3125
+        },
+        "composition_negation": {
+          "questions": 16,
+          "accuracy": 0.25
+        },
+        "composition_nested_and": {
+          "questions": 16,
+          "accuracy": 0.75
+        },
+        "composition_nested_or": {
+          "questions": 16,
+          "accuracy": 0.5
+        },
+        "contrastive_age_eligibility": {
+          "questions": 24,
+          "accuracy": 0.5833333333333334
+        },
+        "contrastive_quantity_limit": {
+          "questions": 24,
+          "accuracy": 0.25
+        },
+        "contrastive_return_window": {
+          "questions": 24,
+          "accuracy": 0.625
+        },
+        "contrastive_spend_threshold": {
+          "questions": 24,
+          "accuracy": 0.5
+        },
+        "dbpedia14": {
+          "questions": 116,
+          "accuracy": 0.8879310344827587
+        },
+        "imdb": {
+          "questions": 80,
+          "accuracy": 0.8625
+        },
+        "mnli": {
+          "questions": 116,
+          "accuracy": 0.41379310344827586
+        },
+        "sst5": {
+          "questions": 80,
+          "accuracy": 0.5
+        },
+        "trec": {
+          "questions": 116,
+          "accuracy": 0.7068965517241379
+        },
+        "yelp": {
+          "questions": 80,
+          "accuracy": 0.55
+        },
+        "yelp_yn": {
+          "questions": 80,
+          "accuracy": 0.9125
+        }
+      },
+      "noul_predictions": {
+        "0": 291,
+        "1": 181
+      },
+      "cache_parity": {
+        "questions": 48,
+        "argmax_disagreements": 0,
+        "max_probability_difference": 0.08055904507637024
+      },
+      "data_overlap": {
+        "training_questions": 15576,
+        "development_questions": 1468,
+        "development_questions_with_training_state": 0,
+        "development_questions_with_training_group": 0,
+        "development_questions_with_training_question": 0,
+        "conflicting_question_keys_across_splits": 0,
+        "scope": "Exact serialized states, source/group IDs, and semantic question keys; no fuzzy overlap detection."
+      },
+      "training_summary": {
+        "adapter": "/root/x/Gut-RWKV/runs/state-screen-v1-lower_state_lr/lower_state_lr/adapter.pt",
+        "steps": 1536,
+        "final_training_loss": 0.7061681747436523,
+        "initial_state_norm": 1.48415207862854
+      }
+    },
+    "legacy_proper_score": {
+      "adapter": "runs/rlcd-screen-proper-v2/adapter.pt",
+      "evaluation": "runs/rlcd-screen-proper-v2/development.json",
+      "sha256": {
+        "base": "eea4fbf9fee9624958f84de3a8e3fd55a1840d76e7be53e211618d48f3ce0e58",
+        "vocab": "e6dee3d4e31b4d5c40ac99508ac6c701ceef4bed681bf2167ce9a908552bca89",
+        "adapter": "3181f7c9405bce6b89721dc9cf79bdf62e2ebf0e4bf42fe565fdef5f03185231",
+        "train": "7ed5254b5cb5291baefaceb09edf7e13110258211518c8038f4a12c11bd628ad",
+        "data": "8d5765d7aec4d08c61854f4664ca79ec2ba44ed092e9b967eaf61ed86c496d9c",
+        "subset": "2c19ce633d146e500d32efcf2b090cfcb2214f6b827e0856cbdfd04c597b8eca"
+      },
+      "evaluation_sha256": "fbe9a066158577090e217e619597fd7a7a539519c111552f2ee0313a31f45be6",
+      "outcomes_sha256": "582a2e214d2ec53f21d01aec4f00c704189f7c86409ac0510076a06cb1f8651e",
+      "metadata": {
+        "base_sha256": "eea4fbf9fee9624958f84de3a8e3fd55a1840d76e7be53e211618d48f3ce0e58",
+        "vocab_sha256": "e6dee3d4e31b4d5c40ac99508ac6c701ceef4bed681bf2167ce9a908552bca89",
+        "data_sha256": "7ed5254b5cb5291baefaceb09edf7e13110258211518c8038f4a12c11bd628ad",
+        "seed": 42,
+        "lr": 0.0001,
+        "dtype": "bfloat16",
+        "epochs": 1,
+        "head_initialization": "before_lora",
+        "base": "/root/x/models/rwkv7/rwkv-g1k-3b-temp-5441.pth",
+        "state_lr": 0.00001,
+        "state_max_norm": null,
+        "sampling": "natural",
+        "max_steps": 1536,
+        "objective": "proper-score",
+        "exploration_std": 0.05,
+        "spherical_weight": 0.5,
+        "rps_weight": 0.5,
+        "baseline_decay": 0.95
+      },
+      "trained_steps": 1536,
+      "correct": 1008,
+      "metrics": {
+        "questions": 1468,
+        "accuracy": 0.6866485013623979,
+        "nll": 1.500775312910751,
+        "brier": 0.4993500692307572,
+        "ece_10_bins": 0.20582619157165533,
+        "by_type": {
+          "choice": {
+            "questions": 756,
+            "accuracy": 0.6455026455026455,
+            "nll": 1.8023307108872992,
+            "brier": 0.5865578439537924,
+            "ece_10_bins": 0.25043338966905754,
+            "uniform_accuracy": 0.2312795669938527
+          },
+          "noul": {
+            "questions": 472,
+            "accuracy": 0.8347457627118644,
+            "nll": 0.8800402530932688,
+            "brier": 0.2701824081056864,
+            "ece_10_bins": 0.11822994975215298,
+            "uniform_accuracy": 0.5
+          },
+          "score": {
+            "questions": 240,
+            "accuracy": 0.525,
+            "nll": 1.7716547602590065,
+            "brier": 0.6753419790658353,
+            "ece_10_bins": 0.24524775594472883,
+            "uniform_accuracy": 0.2
+          }
+        }
+      },
+      "by_source": {
+        "agnews": {
+          "questions": 116,
+          "accuracy": 0.8017241379310345
+        },
+        "agnews_yn": {
+          "questions": 184,
+          "accuracy": 0.8913043478260869
+        },
+        "amazon": {
+          "questions": 80,
+          "accuracy": 0.5375
+        },
+        "banking77": {
+          "questions": 116,
+          "accuracy": 0.6551724137931034
+        },
+        "boolq": {
+          "questions": 80,
+          "accuracy": 0.7375
+        },
+        "composition_atom": {
+          "questions": 16,
+          "accuracy": 0.6875
+        },
+        "composition_conditional": {
+          "questions": 16,
+          "accuracy": 0.625
+        },
+        "composition_conjunction": {
+          "questions": 16,
+          "accuracy": 0.625
+        },
+        "composition_disjunction": {
+          "questions": 16,
+          "accuracy": 0.4375
+        },
+        "composition_exception": {
+          "questions": 16,
+          "accuracy": 0.625
+        },
+        "composition_negation": {
+          "questions": 16,
+          "accuracy": 0.5
+        },
+        "composition_nested_and": {
+          "questions": 16,
+          "accuracy": 0.625
+        },
+        "composition_nested_or": {
+          "questions": 16,
+          "accuracy": 0.375
+        },
+        "contrastive_age_eligibility": {
+          "questions": 24,
+          "accuracy": 0.625
+        },
+        "contrastive_quantity_limit": {
+          "questions": 24,
+          "accuracy": 0.25
+        },
+        "contrastive_return_window": {
+          "questions": 24,
+          "accuracy": 0.5
+        },
+        "contrastive_spend_threshold": {
+          "questions": 24,
+          "accuracy": 0.5416666666666666
+        },
+        "dbpedia14": {
+          "questions": 116,
+          "accuracy": 0.8879310344827587
+        },
+        "imdb": {
+          "questions": 80,
+          "accuracy": 0.8875
+        },
+        "mnli": {
+          "questions": 116,
+          "accuracy": 0.35344827586206895
+        },
+        "sst5": {
+          "questions": 80,
+          "accuracy": 0.475
+        },
+        "trec": {
+          "questions": 116,
+          "accuracy": 0.7241379310344828
+        },
+        "yelp": {
+          "questions": 80,
+          "accuracy": 0.5625
+        },
+        "yelp_yn": {
+          "questions": 80,
+          "accuracy": 0.9125
+        }
+      },
+      "noul_predictions": {
+        "0": 281,
+        "1": 191
+      },
+      "cache_parity": {
+        "questions": 48,
+        "argmax_disagreements": 0,
+        "max_probability_difference": 0.12421339750289917
+      },
+      "data_overlap": {
+        "training_questions": 15576,
+        "development_questions": 1468,
+        "development_questions_with_training_state": 0,
+        "development_questions_with_training_group": 0,
+        "development_questions_with_training_question": 0,
+        "conflicting_question_keys_across_splits": 0,
+        "scope": "Exact serialized states, source/group IDs, and semantic question keys; no fuzzy overlap detection."
+      },
+      "training_summary": {
+        "adapter": "runs/rlcd-screen-proper-v2/adapter.pt",
+        "steps": 1536,
+        "final_training_loss": -0.11431533098220825,
+        "initial_state_norm": 1.5633903741836548
+      }
+    },
+    "pathwise": {
+      "adapter": "/root/x/Gut-RWKV/runs/policy-screen-seed42-pathwise/pathwise/adapter.pt",
+      "evaluation": "runs/policy-screen-seed42-pathwise/pathwise/development.json",
+      "sha256": {
+        "base": "eea4fbf9fee9624958f84de3a8e3fd55a1840d76e7be53e211618d48f3ce0e58",
+        "vocab": "e6dee3d4e31b4d5c40ac99508ac6c701ceef4bed681bf2167ce9a908552bca89",
+        "adapter": "04bf9901b7e79913d2ba66ed242697d6b4a5fce45829d4a7673d4af1efa3f940",
+        "train": "7ed5254b5cb5291baefaceb09edf7e13110258211518c8038f4a12c11bd628ad",
+        "data": "8d5765d7aec4d08c61854f4664ca79ec2ba44ed092e9b967eaf61ed86c496d9c",
+        "subset": "2c19ce633d146e500d32efcf2b090cfcb2214f6b827e0856cbdfd04c597b8eca"
+      },
+      "evaluation_sha256": "9a79327543654bb92b731a2a75308dc36da29427d99bb5bf80d7233205953b0f",
+      "outcomes_sha256": "3c3889d4908cd89efc9663f5beb09ef45511afd9c8431bf8fa51cb2a2f93108c",
+      "metadata": {
+        "base_sha256": "eea4fbf9fee9624958f84de3a8e3fd55a1840d76e7be53e211618d48f3ce0e58",
+        "vocab_sha256": "e6dee3d4e31b4d5c40ac99508ac6c701ceef4bed681bf2167ce9a908552bca89",
+        "data_sha256": "7ed5254b5cb5291baefaceb09edf7e13110258211518c8038f4a12c11bd628ad",
+        "seed": 42,
+        "lr": 0.0001,
+        "dtype": "bfloat16",
+        "epochs": 1,
+        "head_initialization": "before_lora",
+        "base": "/root/x/models/rwkv7/rwkv-g1k-3b-temp-5441.pth",
+        "state_lr": 0.00001,
+        "state_max_norm": null,
+        "sampling": "natural",
+        "max_steps": 1536,
+        "objective": "pathwise",
+        "exploration_std": 0.05,
+        "spherical_weight": 0.5,
+        "rps_weight": 0.5,
+        "baseline_decay": 0.95,
+        "policy_samples": 32,
+        "reward_definition": "score-only-rps-stable-log",
+        "training_cli_sha256": "f604239b052bc96a09cdc00911c0dec6e75b5d52c8de9a86dab68ceaf793ba2c"
+      },
+      "trained_steps": 1536,
+      "correct": 1006,
+      "metrics": {
+        "questions": 1468,
+        "accuracy": 0.6852861035422343,
+        "nll": 1.3078540102893468,
+        "brier": 0.4835125840877016,
+        "ece_10_bins": 0.18619445454562716,
+        "by_type": {
+          "choice": {
+            "questions": 756,
+            "accuracy": 0.6507936507936508,
+            "nll": 1.5127263161137647,
+            "brier": 0.5319076129156293,
+            "ece_10_bins": 0.2012796455787288,
+            "uniform_accuracy": 0.2312795669938527
+          },
+          "noul": {
+            "questions": 472,
+            "accuracy": 0.8326271186440678,
+            "nll": 0.744616353628003,
+            "brier": 0.2740525070991666,
+            "ece_10_bins": 0.11650688062279911,
+            "uniform_accuracy": 0.5
+          },
+          "score": {
+            "questions": 240,
+            "accuracy": 0.5041666666666667,
+            "nll": 1.7702069717097402,
+            "brier": 0.7430063946905143,
+            "ece_10_bins": 0.30020153758426504,
+            "uniform_accuracy": 0.2
+          }
+        }
+      },
+      "by_source": {
+        "agnews": {
+          "questions": 116,
+          "accuracy": 0.7931034482758621
+        },
+        "agnews_yn": {
+          "questions": 184,
+          "accuracy": 0.8804347826086957
+        },
+        "amazon": {
+          "questions": 80,
+          "accuracy": 0.4875
+        },
+        "banking77": {
+          "questions": 116,
+          "accuracy": 0.603448275862069
+        },
+        "boolq": {
+          "questions": 80,
+          "accuracy": 0.6875
+        },
+        "composition_atom": {
+          "questions": 16,
+          "accuracy": 0.4375
+        },
+        "composition_conditional": {
+          "questions": 16,
+          "accuracy": 0.625
+        },
+        "composition_conjunction": {
+          "questions": 16,
+          "accuracy": 0.8125
+        },
+        "composition_disjunction": {
+          "questions": 16,
+          "accuracy": 0.5
+        },
+        "composition_exception": {
+          "questions": 16,
+          "accuracy": 0.5625
+        },
+        "composition_negation": {
+          "questions": 16,
+          "accuracy": 0.5
+        },
+        "composition_nested_and": {
+          "questions": 16,
+          "accuracy": 0.625
+        },
+        "composition_nested_or": {
+          "questions": 16,
+          "accuracy": 0.5
+        },
+        "contrastive_age_eligibility": {
+          "questions": 24,
+          "accuracy": 0.875
+        },
+        "contrastive_quantity_limit": {
+          "questions": 24,
+          "accuracy": 0.25
+        },
+        "contrastive_return_window": {
+          "questions": 24,
+          "accuracy": 0.5
+        },
+        "contrastive_spend_threshold": {
+          "questions": 24,
+          "accuracy": 0.5833333333333334
+        },
+        "dbpedia14": {
+          "questions": 116,
+          "accuracy": 0.896551724137931
+        },
+        "imdb": {
+          "questions": 80,
+          "accuracy": 0.875
+        },
+        "mnli": {
+          "questions": 116,
+          "accuracy": 0.4051724137931034
+        },
+        "sst5": {
+          "questions": 80,
+          "accuracy": 0.4875
+        },
+        "trec": {
+          "questions": 116,
+          "accuracy": 0.7413793103448276
+        },
+        "yelp": {
+          "questions": 80,
+          "accuracy": 0.5375
+        },
+        "yelp_yn": {
+          "questions": 80,
+          "accuracy": 0.9125
+        }
+      },
+      "noul_predictions": {
+        "0": 266,
+        "1": 206
+      },
+      "cache_parity": {
+        "questions": 48,
+        "argmax_disagreements": 1,
+        "max_probability_difference": 0.09797412157058716
+      },
+      "data_overlap": {
+        "training_questions": 15576,
+        "development_questions": 1468,
+        "development_questions_with_training_state": 0,
+        "development_questions_with_training_group": 0,
+        "development_questions_with_training_question": 0,
+        "conflicting_question_keys_across_splits": 0,
+        "scope": "Exact serialized states, source/group IDs, and semantic question keys; no fuzzy overlap detection."
+      },
+      "training_summary": {
+        "adapter": "/root/x/Gut-RWKV/runs/policy-screen-seed42-pathwise/pathwise/adapter.pt",
+        "steps": 1536,
+        "final_training_loss": 0.5014422535896301,
+        "initial_state_norm": 1.653228759765625
+      },
+      "manifest_sha256": "b95f835fc39de79a82c5e93b7b6f5355500a34484007820fdb1b77fc948e9fb1",
+      "commands": {
+        "train": [
+          "/root/x/Gut-RWKV/.venv/bin/python",
+          "-m",
+          "rwkv_jev.cli",
+          "train",
+          "--base",
+          "/root/x/models/rwkv7/rwkv-g1k-3b-temp-5441.pth",
+          "--vocab",
+          "/root/x/models/rwkv7/rwkv_vocab_v20230424.txt",
+          "--adapter",
+          "/root/x/Gut-RWKV/runs/policy-screen-seed42-pathwise/pathwise/adapter.pt",
+          "--data",
+          "/root/x/Gut-RWKV/runs/pilot-data/upstream-train.jsonl",
+          "--state-tuning",
+          "--epochs",
+          "1",
+          "--max-steps",
+          "1536",
+          "--lr",
+          "1e-4",
+          "--seed",
+          "42",
+          "--checkpoint-every",
+          "384",
+          "--output",
+          "/root/x/Gut-RWKV/runs/policy-screen-seed42-pathwise/pathwise/train-summary.json",
+          "--state-lr",
+          "1e-5",
+          "--objective",
+          "pathwise",
+          "--policy-samples",
+          "32",
+          "--exploration-std",
+          "0.05",
+          "--spherical-weight",
+          "0.5",
+          "--rps-weight",
+          "0.5"
+        ],
+        "evaluate": [
+          "/root/x/Gut-RWKV/.venv/bin/python",
+          "/root/x/Gut-RWKV/scripts/audit_decisions.py",
+          "--base",
+          "/root/x/models/rwkv7/rwkv-g1k-3b-temp-5441.pth",
+          "--vocab",
+          "/root/x/models/rwkv7/rwkv_vocab_v20230424.txt",
+          "--adapter",
+          "/root/x/Gut-RWKV/runs/policy-screen-seed42-pathwise/pathwise/adapter.pt",
+          "--train",
+          "/root/x/Gut-RWKV/runs/pilot-data/upstream-train.jsonl",
+          "--data",
+          "/root/x/Gut-RWKV/runs/pilot-data/upstream-development.jsonl",
+          "--subset",
+          "/root/x/Gut-RWKV/runs/pilot-data/development.jsonl",
+          "--parity-per-source",
+          "2",
+          "--output",
+          "/root/x/Gut-RWKV/runs/policy-screen-seed42-pathwise/pathwise/development.json"
+        ],
+        "unique_training_questions": 1536,
+        "source_counts": {
+          "composition_rand:if(not(0),1,2)": 4,
+          "trec": 102,
+          "dbpedia14": 105,
+          "yelp_yn": 92,
+          "contrastive_spend_threshold": 7,
+          "agnews_yn": 184,
+          "banking77": 100,
+          "sst5": 94,
+          "mnli": 95,
+          "composition_rand:or(0,or(and(1,2),not(3)))": 3,
+          "composition_rand:unless(and(0,1),2)": 3,
+          "agnews": 104,
+          "contrastive_volume_discount": 8,
+          "yelp": 91,
+          "imdb": 124,
+          "boolq": 95,
+          "amazon": 113,
+          "composition_rand:and(or(0,1),unless(2,3))": 5,
+          "composition_rand:or(0,and(1,2))": 3,
+          "composition_rand:and(and(0,1),or(2,3))": 5,
+          "contrastive_return_window": 8,
+          "composition_rand:not(unless(0,1))": 7,
+          "composition_rand:or(unless(0,1),unless(2,3))": 3,
+          "composition_rand:and(0,not(if(1,2,3)))": 3,
+          "composition_rand:or(0,not(and(1,2)))": 4,
+          "composition_rand:and(and(0,1),unless(2,3))": 3,
+          "contrastive_sla_response": 8,
+          "composition_rand:not(not(or(0,1)))": 3,
+          "contrastive_age_eligibility": 10,
+          "contrastive_late_fee": 14,
+          "composition_rand:or(or(0,1),or(2,3))": 2,
+          "composition_rand:or(0,if(1,2,3))": 3,
+          "composition_rand:or(or(0,1),unless(2,3))": 1,
+          "composition_rand:and(0,unless(1,not(2)))": 4,
+          "composition_rand:if(0,1,and(2,3))": 3,
+          "composition_rand:unless(0,and(and(1,2),not(3)))": 6,
+          "composition_rand:unless(unless(0,or(1,2)),3)": 1,
+          "composition_rand:and(if(0,1,2),not(3))": 3,
+          "composition_rand:unless(0,and(1,and(2,3)))": 2,
+          "composition_rand:unless(unless(0,1),2)": 3,
+          "composition_rand:unless(and(0,1),unless(2,3))": 3,
+          "composition_rand:if(0,not(1),and(2,3))": 3,
+          "composition_rand:or(and(0,1),unless(2,3))": 1,
+          "contrastive_warranty_claim": 14,
+          "contrastive_quantity_limit": 14,
+          "composition_rand:unless(and(0,1),and(2,3))": 3,
+          "composition_rand:and(and(0,1),and(2,3))": 4,
+          "composition_rand:not(if(0,not(1),or(2,3)))": 3,
+          "composition_rand:unless(not(or(0,1)),not(and(2,3)))": 4,
+          "composition_rand:unless(or(0,1),and(2,3))": 4,
+          "composition_rand:or(and(0,1),and(2,3))": 4,
+          "composition_rand:if(0,and(not(1),not(2)),not(not(3)))": 1,
+          "composition_rand:and(0,not(1))": 2,
+          "composition_rand:or(0,or(1,2))": 2,
+          "composition_rand:and(or(0,1),or(2,3))": 3,
+          "composition_rand:or(if(0,1,2),not(3))": 3,
+          "composition_rand:unless(or(0,1),2)": 1,
+          "composition_rand:unless(0,and(1,2))": 2,
+          "composition_rand:unless(or(not(0),unless(1,2)),3)": 1,
+          "composition_rand:unless(0,or(1,2))": 5,
+          "composition_rand:or(not(0),unless(1,2))": 2,
+          "composition_rand:or(0,or(1,or(2,3)))": 3,
+          "composition_rand:if(0,not(or(1,2)),not(3))": 5,
+          "composition_rand:unless(or(0,1),or(2,3))": 3,
+          "composition_rand:not(or(0,or(1,2)))": 1,
+          "composition_rand:and(0,1)": 1,
+          "composition_rand:and(and(0,not(1)),and(2,not(3)))": 1,
+          "composition_rand:or(0,not(or(1,2)))": 2,
+          "composition_rand:not(and(0,1))": 2,
+          "composition_rand:and(0,and(1,or(2,3)))": 3,
+          "composition_rand:and(not(not(0)),or(and(1,2),not(3)))": 1,
+          "composition_rand:if(0,and(1,2),not(3))": 2,
+          "composition_rand:and(0,unless(1,2))": 1,
+          "composition_rand:unless(not(0),unless(1,2))": 2,
+          "composition_rand:or(and(0,1),or(2,3))": 1,
+          "composition_rand:not(if(0,1,2))": 1
+        },
+        "noul_label_counts": {
+          "yelp_yn": {
+            "0": 50,
+            "1": 42
+          },
+          "agnews_yn": {
+            "0": 136,
+            "1": 48
+          },
+          "imdb": {
+            "0": 62,
+            "1": 62
+          },
+          "boolq": {
+            "0": 34,
+            "1": 61
+          },
+          "contrastive_return_window": {
+            "0": 5,
+            "1": 3
+          },
+          "contrastive_age_eligibility": {
+            "0": 4,
+            "1": 6
+          }
+        }
+      }
+    },
+    "reinforce": {
+      "adapter": "/root/x/Gut-RWKV/runs/policy-screen-seed42-reinforce/reinforce/adapter.pt",
+      "evaluation": "runs/policy-screen-seed42-reinforce/reinforce/development.json",
+      "sha256": {
+        "base": "eea4fbf9fee9624958f84de3a8e3fd55a1840d76e7be53e211618d48f3ce0e58",
+        "vocab": "e6dee3d4e31b4d5c40ac99508ac6c701ceef4bed681bf2167ce9a908552bca89",
+        "adapter": "4b9dfed29cb080ee55ae30e4a61bb75046487346bc689c6e147e2690b3295562",
+        "train": "7ed5254b5cb5291baefaceb09edf7e13110258211518c8038f4a12c11bd628ad",
+        "data": "8d5765d7aec4d08c61854f4664ca79ec2ba44ed092e9b967eaf61ed86c496d9c",
+        "subset": "2c19ce633d146e500d32efcf2b090cfcb2214f6b827e0856cbdfd04c597b8eca"
+      },
+      "evaluation_sha256": "cd85d57868fb49eed2ba10e892fc65fbef88175956671f7ca3c0026e540990f7",
+      "outcomes_sha256": "7cce1333e6899fb1370577836653312f1a0fa6b1d34937ef1dd3e02147fb4fad",
+      "metadata": {
+        "base_sha256": "eea4fbf9fee9624958f84de3a8e3fd55a1840d76e7be53e211618d48f3ce0e58",
+        "vocab_sha256": "e6dee3d4e31b4d5c40ac99508ac6c701ceef4bed681bf2167ce9a908552bca89",
+        "data_sha256": "7ed5254b5cb5291baefaceb09edf7e13110258211518c8038f4a12c11bd628ad",
+        "seed": 42,
+        "lr": 0.0001,
+        "dtype": "bfloat16",
+        "epochs": 1,
+        "head_initialization": "before_lora",
+        "base": "/root/x/models/rwkv7/rwkv-g1k-3b-temp-5441.pth",
+        "state_lr": 0.00001,
+        "state_max_norm": null,
+        "sampling": "natural",
+        "max_steps": 1536,
+        "objective": "reinforce",
+        "exploration_std": 0.05,
+        "spherical_weight": 0.5,
+        "rps_weight": 0.5,
+        "baseline_decay": 0.95,
+        "policy_samples": 32,
+        "reward_definition": "score-only-rps-stable-log",
+        "training_cli_sha256": "f604239b052bc96a09cdc00911c0dec6e75b5d52c8de9a86dab68ceaf793ba2c"
+      },
+      "trained_steps": 1536,
+      "correct": 984,
+      "metrics": {
+        "questions": 1468,
+        "accuracy": 0.670299727520436,
+        "nll": 1.596386912407261,
+        "brier": 0.5139856165768341,
+        "ece_10_bins": 0.20933824925802708,
+        "by_type": {
+          "choice": {
+            "questions": 756,
+            "accuracy": 0.6164021164021164,
+            "nll": 1.8472833136429982,
+            "brier": 0.594072215396776,
+            "ece_10_bins": 0.23719404074092393,
+            "uniform_accuracy": 0.2312795669938527
+          },
+          "noul": {
+            "questions": 472,
+            "accuracy": 0.8241525423728814,
+            "nll": 0.9505962295959841,
+            "brier": 0.2822581254277319,
+            "ece_10_bins": 0.11755420305466249,
+            "uniform_accuracy": 0.5
+          },
+          "score": {
+            "questions": 240,
+            "accuracy": 0.5375,
+            "nll": 2.076118258043531,
+            "brier": 0.7174435628872515,
+            "ece_10_bins": 0.3021011302868525,
+            "uniform_accuracy": 0.2
+          }
+        }
+      },
+      "by_source": {
+        "agnews": {
+          "questions": 116,
+          "accuracy": 0.7413793103448276
+        },
+        "agnews_yn": {
+          "questions": 184,
+          "accuracy": 0.8804347826086957
+        },
+        "amazon": {
+          "questions": 80,
+          "accuracy": 0.5375
+        },
+        "banking77": {
+          "questions": 116,
+          "accuracy": 0.6120689655172413
+        },
+        "boolq": {
+          "questions": 80,
+          "accuracy": 0.725
+        },
+        "composition_atom": {
+          "questions": 16,
+          "accuracy": 0.4375
+        },
+        "composition_conditional": {
+          "questions": 16,
+          "accuracy": 0.625
+        },
+        "composition_conjunction": {
+          "questions": 16,
+          "accuracy": 0.4375
+        },
+        "composition_disjunction": {
+          "questions": 16,
+          "accuracy": 0.75
+        },
+        "composition_exception": {
+          "questions": 16,
+          "accuracy": 0.5
+        },
+        "composition_negation": {
+          "questions": 16,
+          "accuracy": 0.5
+        },
+        "composition_nested_and": {
+          "questions": 16,
+          "accuracy": 0.375
+        },
+        "composition_nested_or": {
+          "questions": 16,
+          "accuracy": 0.5625
+        },
+        "contrastive_age_eligibility": {
+          "questions": 24,
+          "accuracy": 0.5416666666666666
+        },
+        "contrastive_quantity_limit": {
+          "questions": 24,
+          "accuracy": 0.25
+        },
+        "contrastive_return_window": {
+          "questions": 24,
+          "accuracy": 0.5833333333333334
+        },
+        "contrastive_spend_threshold": {
+          "questions": 24,
+          "accuracy": 0.5
+        },
+        "dbpedia14": {
+          "questions": 116,
+          "accuracy": 0.8706896551724138
+        },
+        "imdb": {
+          "questions": 80,
+          "accuracy": 0.8625
+        },
+        "mnli": {
+          "questions": 116,
+          "accuracy": 0.3275862068965517
+        },
+        "sst5": {
+          "questions": 80,
+          "accuracy": 0.5125
+        },
+        "trec": {
+          "questions": 116,
+          "accuracy": 0.7327586206896551
+        },
+        "yelp": {
+          "questions": 80,
+          "accuracy": 0.5625
+        },
+        "yelp_yn": {
+          "questions": 80,
+          "accuracy": 0.9125
+        }
+      },
+      "noul_predictions": {
+        "0": 284,
+        "1": 188
+      },
+      "cache_parity": {
+        "questions": 48,
+        "argmax_disagreements": 0,
+        "max_probability_difference": 0.05011320114135742
+      },
+      "data_overlap": {
+        "training_questions": 15576,
+        "development_questions": 1468,
+        "development_questions_with_training_state": 0,
+        "development_questions_with_training_group": 0,
+        "development_questions_with_training_question": 0,
+        "conflicting_question_keys_across_splits": 0,
+        "scope": "Exact serialized states, source/group IDs, and semantic question keys; no fuzzy overlap detection."
+      },
+      "training_summary": {
+        "adapter": "/root/x/Gut-RWKV/runs/policy-screen-seed42-reinforce/reinforce/adapter.pt",
+        "steps": 1536,
+        "final_training_loss": -0.0006879335269331932,
+        "initial_state_norm": 1.7613084316253662
+      },
+      "manifest_sha256": "90c073874ce9f4d5b1cfe9ac6829e9320aae2890d9c44fd2512919524e1ed762",
+      "commands": {
+        "train": [
+          "/root/x/Gut-RWKV/.venv/bin/python",
+          "-m",
+          "rwkv_jev.cli",
+          "train",
+          "--base",
+          "/root/x/models/rwkv7/rwkv-g1k-3b-temp-5441.pth",
+          "--vocab",
+          "/root/x/models/rwkv7/rwkv_vocab_v20230424.txt",
+          "--adapter",
+          "/root/x/Gut-RWKV/runs/policy-screen-seed42-reinforce/reinforce/adapter.pt",
+          "--data",
+          "/root/x/Gut-RWKV/runs/pilot-data/upstream-train.jsonl",
+          "--state-tuning",
+          "--epochs",
+          "1",
+          "--max-steps",
+          "1536",
+          "--lr",
+          "1e-4",
+          "--seed",
+          "42",
+          "--checkpoint-every",
+          "384",
+          "--output",
+          "/root/x/Gut-RWKV/runs/policy-screen-seed42-reinforce/reinforce/train-summary.json",
+          "--state-lr",
+          "1e-5",
+          "--objective",
+          "reinforce",
+          "--policy-samples",
+          "32",
+          "--exploration-std",
+          "0.05",
+          "--spherical-weight",
+          "0.5",
+          "--rps-weight",
+          "0.5"
+        ],
+        "evaluate": [
+          "/root/x/Gut-RWKV/.venv/bin/python",
+          "/root/x/Gut-RWKV/scripts/audit_decisions.py",
+          "--base",
+          "/root/x/models/rwkv7/rwkv-g1k-3b-temp-5441.pth",
+          "--vocab",
+          "/root/x/models/rwkv7/rwkv_vocab_v20230424.txt",
+          "--adapter",
+          "/root/x/Gut-RWKV/runs/policy-screen-seed42-reinforce/reinforce/adapter.pt",
+          "--train",
+          "/root/x/Gut-RWKV/runs/pilot-data/upstream-train.jsonl",
+          "--data",
+          "/root/x/Gut-RWKV/runs/pilot-data/upstream-development.jsonl",
+          "--subset",
+          "/root/x/Gut-RWKV/runs/pilot-data/development.jsonl",
+          "--parity-per-source",
+          "2",
+          "--output",
+          "/root/x/Gut-RWKV/runs/policy-screen-seed42-reinforce/reinforce/development.json"
+        ],
+        "unique_training_questions": 1536,
+        "source_counts": {
+          "composition_rand:if(not(0),1,2)": 4,
+          "trec": 102,
+          "dbpedia14": 105,
+          "yelp_yn": 92,
+          "contrastive_spend_threshold": 7,
+          "agnews_yn": 184,
+          "banking77": 100,
+          "sst5": 94,
+          "mnli": 95,
+          "composition_rand:or(0,or(and(1,2),not(3)))": 3,
+          "composition_rand:unless(and(0,1),2)": 3,
+          "agnews": 104,
+          "contrastive_volume_discount": 8,
+          "yelp": 91,
+          "imdb": 124,
+          "boolq": 95,
+          "amazon": 113,
+          "composition_rand:and(or(0,1),unless(2,3))": 5,
+          "composition_rand:or(0,and(1,2))": 3,
+          "composition_rand:and(and(0,1),or(2,3))": 5,
+          "contrastive_return_window": 8,
+          "composition_rand:not(unless(0,1))": 7,
+          "composition_rand:or(unless(0,1),unless(2,3))": 3,
+          "composition_rand:and(0,not(if(1,2,3)))": 3,
+          "composition_rand:or(0,not(and(1,2)))": 4,
+          "composition_rand:and(and(0,1),unless(2,3))": 3,
+          "contrastive_sla_response": 8,
+          "composition_rand:not(not(or(0,1)))": 3,
+          "contrastive_age_eligibility": 10,
+          "contrastive_late_fee": 14,
+          "composition_rand:or(or(0,1),or(2,3))": 2,
+          "composition_rand:or(0,if(1,2,3))": 3,
+          "composition_rand:or(or(0,1),unless(2,3))": 1,
+          "composition_rand:and(0,unless(1,not(2)))": 4,
+          "composition_rand:if(0,1,and(2,3))": 3,
+          "composition_rand:unless(0,and(and(1,2),not(3)))": 6,
+          "composition_rand:unless(unless(0,or(1,2)),3)": 1,
+          "composition_rand:and(if(0,1,2),not(3))": 3,
+          "composition_rand:unless(0,and(1,and(2,3)))": 2,
+          "composition_rand:unless(unless(0,1),2)": 3,
+          "composition_rand:unless(and(0,1),unless(2,3))": 3,
+          "composition_rand:if(0,not(1),and(2,3))": 3,
+          "composition_rand:or(and(0,1),unless(2,3))": 1,
+          "contrastive_warranty_claim": 14,
+          "contrastive_quantity_limit": 14,
+          "composition_rand:unless(and(0,1),and(2,3))": 3,
+          "composition_rand:and(and(0,1),and(2,3))": 4,
+          "composition_rand:not(if(0,not(1),or(2,3)))": 3,
+          "composition_rand:unless(not(or(0,1)),not(and(2,3)))": 4,
+          "composition_rand:unless(or(0,1),and(2,3))": 4,
+          "composition_rand:or(and(0,1),and(2,3))": 4,
+          "composition_rand:if(0,and(not(1),not(2)),not(not(3)))": 1,
+          "composition_rand:and(0,not(1))": 2,
+          "composition_rand:or(0,or(1,2))": 2,
+          "composition_rand:and(or(0,1),or(2,3))": 3,
+          "composition_rand:or(if(0,1,2),not(3))": 3,
+          "composition_rand:unless(or(0,1),2)": 1,
+          "composition_rand:unless(0,and(1,2))": 2,
+          "composition_rand:unless(or(not(0),unless(1,2)),3)": 1,
+          "composition_rand:unless(0,or(1,2))": 5,
+          "composition_rand:or(not(0),unless(1,2))": 2,
+          "composition_rand:or(0,or(1,or(2,3)))": 3,
+          "composition_rand:if(0,not(or(1,2)),not(3))": 5,
+          "composition_rand:unless(or(0,1),or(2,3))": 3,
+          "composition_rand:not(or(0,or(1,2)))": 1,
+          "composition_rand:and(0,1)": 1,
+          "composition_rand:and(and(0,not(1)),and(2,not(3)))": 1,
+          "composition_rand:or(0,not(or(1,2)))": 2,
+          "composition_rand:not(and(0,1))": 2,
+          "composition_rand:and(0,and(1,or(2,3)))": 3,
+          "composition_rand:and(not(not(0)),or(and(1,2),not(3)))": 1,
+          "composition_rand:if(0,and(1,2),not(3))": 2,
+          "composition_rand:and(0,unless(1,2))": 1,
+          "composition_rand:unless(not(0),unless(1,2))": 2,
+          "composition_rand:or(and(0,1),or(2,3))": 1,
+          "composition_rand:not(if(0,1,2))": 1
+        },
+        "noul_label_counts": {
+          "yelp_yn": {
+            "0": 50,
+            "1": 42
+          },
+          "agnews_yn": {
+            "0": 136,
+            "1": 48
+          },
+          "imdb": {
+            "0": 62,
+            "1": 62
+          },
+          "boolq": {
+            "0": 34,
+            "1": 61
+          },
+          "contrastive_return_window": {
+            "0": 5,
+            "1": 3
+          },
+          "contrastive_age_eligibility": {
+            "0": 4,
+            "1": 6
+          }
+        }
+      }
+    }
+  },
+  "paired_comparisons": [
+    {
+      "candidate": "reinforce",
+      "reference": "pathwise",
+      "gained": 83,
+      "lost": 105
+    },
+    {
+      "candidate": "pathwise",
+      "reference": "cross_entropy",
+      "gained": 73,
+      "lost": 64
+    },
+    {
+      "candidate": "reinforce",
+      "reference": "cross_entropy",
+      "gained": 76,
+      "lost": 89
+    },
+    {
+      "candidate": "pathwise",
+      "reference": "legacy_proper_score",
+      "gained": 62,
+      "lost": 64
+    },
+    {
+      "candidate": "reinforce",
+      "reference": "legacy_proper_score",
+      "gained": 87,
+      "lost": 111
+    }
+  ]
+}
