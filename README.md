@@ -1,65 +1,78 @@
 # Gut-RWKV
 
-**Typed decisions from recurrent memory.** An experimental Jev-style model built
-on RWKV-7: context and bounded questions in, Choice / Score / Noul probabilities
-out, with no generated answer tokens.
+<p align="center">
+  <strong>Typed decisions from recurrent memory.</strong><br>
+  An experimental Jev-style decision model built on RWKV-7 G1k 3B.
+</p>
 
-Gut-RWKV supports **initial-state tuning plus a decision head**, or **LoRA plus
-the same head**, over a frozen base. Inference encodes the input context once,
-batches independent question branches, then batches candidate branches. This
-uses RWKV's constant-size recurrent memory without a context-growing KV cache.
+<p align="center">
+  <a href="https://github.com/xiaol/Gut-RWKV-Jev/actions/workflows/tests.yml"><img src="https://github.com/xiaol/Gut-RWKV-Jev/actions/workflows/tests.yml/badge.svg" alt="Tests"></a>
+  <img src="https://img.shields.io/badge/python-3.10%2B-3776AB?logo=python&logoColor=white" alt="Python 3.10+">
+  <img src="https://img.shields.io/badge/base-RWKV--7%20G1k%203B-6f42c1" alt="RWKV-7 G1k 3B">
+  <img src="https://img.shields.io/badge/status-research%20prototype-orange" alt="Research prototype">
+</p>
 
-This is independent work, not TypeSafe's Jev or its private training recipe.
-The G1k 3B state-tuned pilot reaches **33/48 (68.8%)** on the small held-out
-development sample and **38/72 (52.8%)** on JevBench's original public subset.
-It is uncalibrated and is not a general-purpose release. See
-[EXPERIMENTS.md](EXPERIMENTS.md), [RESEARCH.md](RESEARCH.md) and [SOTA.md](SOTA.md)
-for comparisons, prior work and the path toward a competitive benchmark result.
-On the same 1,468-question development set, the state pilot scores **61.4%**,
-rank-16 LoRA **54.5%**, and head-only **48.0%** with matched pilot data and updates.
-The subsequent full-data state run regresses to **44.3%** and largely collapses
-to false on boolean questions. See [AUDIT.md](AUDIT.md) for controls, ablations
-and numerical limits. These are single-seed development results, not JevBench ranks.
+Gut-RWKV reads a context and typed questions, then returns probabilities for
+**Choice**, **Noul** (boolean) and **Score** answers. It does not generate answer
+tokens. A single RWKV prefill is reused across question and candidate branches,
+so inference keeps RWKV's constant-size recurrent state instead of a growing KV
+cache.
 
-The follow-up [state-update screen](STATE_SCREEN.md) with state LR `1e-5` and
-head LR `1e-4` averages **68.39% accuracy across three seeds** after 1,536 updates
-(sample SD 0.45 percentage points). Matched controls average 46.46%, with high
-variability; control seed 44 scores the highest individual result, **69.48%**.
-Lower LR is more consistent in this sample. NLL and calibration error remain
-worse than the older pilot, and these are development results, not JevBench scores.
+## At a glance
 
-A matched seed-42 objective screen scores **68.66%** with proper scoring and
-**67.17%** with Gaussian logit noise, versus **67.92%** for cross-entropy.
-The CLI's experimental `rlcd` objective uses reparameterized noisy proper scoring;
-it is not REINFORCE or a reproduction of Laya. The proper-score gain is only
-11 answers, NLL worsens, and neither new adapter has a JevBench result. See
-[the objective screen](STATE_SCREEN.md#proper-score-and-noisy-objective-screen).
+| Track | Result | Scope |
+| --- | ---: | --- |
+| Lower-LR cross-entropy | **149/231 (64.5%)** | All currently public JevBench tasks; 231/231 valid |
+| Pathwise typed reward | **143/231 (61.9%)** | Same public tasks; 231/231 valid |
+| Lower-LR development baseline | **68.39% ± 0.45** | Three seeds on the reused development set |
+| Official JevBench rank | **Unranked** | 303 organizer-held tasks are not public |
 
-The completed [policy-gradient screen](POLICY_SCREEN.md) scores **67.03%** for
-actual Gaussian REINFORCE and **68.53%** for its matched differentiable control,
-with ordinal rewards limited to Score questions. The control also improves NLL,
-Brier and ECE over seed-42 cross-entropy, but needs replication. These remain
-development results, not JevBench scores or Laya recipe parity.
+The lower-LR cross-entropy run is the current external baseline. The public
+comparison is useful for reproducibility, but it is not a full 534-task JevBench
+submission or an SOTA claim. Results and limitations are tracked in
+[EXPERIMENTS.md](EXPERIMENTS.md), [AUDIT.md](AUDIT.md) and [SOTA.md](SOTA.md).
 
-Training loss logs and checkpoint timing are summarized in
-[LEARNING_CURVES.md](LEARNING_CURVES.md). Raw run directories are ignored by git;
-the checked-in report preserves the extracted points and final summaries.
+## What is distinctive
 
-The pathwise candidate replicates at **68.89% ± 0.31 points across three seeds**
-on the reused development set, versus **68.39% ± 0.45** for lower-LR
-cross-entropy. It wins each matched seed but remains a small development gain;
-cross-entropy is still one answer ahead on the 72-question public JevBench cohort.
+- **State tuning:** learns initial RWKV WKV state matrices and a typed decision
+  head while keeping the base model frozen; LoRA and head-only controls are included.
+- **Typed outputs:** handles Choice, Noul and ordered Score questions with one
+  interface and explicit validity checks.
+- **Recurrent branching:** encodes context once, then branches questions and
+  candidates without a context-growing attention cache.
+- **Open measurement:** keeps public-task comparisons, seed screens, loss curves
+  and negative results alongside the implementation.
 
-On the exact 72-question JevBench original-public cohort, lower-LR cross-entropy
-scores **56/72 (77.8%)** and the pathwise typed-reward candidate scores **55/72
-(76.4%)**. Lower-LR cross-entropy is therefore the current external baseline;
-neither result is a full JevBench rank. See the
-[public comparison](EXPERIMENTS.md#public-jevbench-comparison-after-objective-screening).
+This is independent research, not TypeSafe's Jev implementation or its private
+training recipe. The RL-style objectives are exploratory screens, not Laya recipe
+parity; the current evidence favors the simpler lower-LR cross-entropy baseline.
 
-On all 231 currently public tasks, lower-LR cross-entropy scores **149/231
-(64.5%)**, while pathwise scores **143/231 (61.9%)**. Both have strict validity
-on every task. The broader public result makes lower-LR cross-entropy the safer
-external baseline; it is not an official 534-task JevBench score.
+## Research status
+
+The project is a reproducible research prototype rather than a general-purpose
+release. Development screens include proper scoring, pathwise rewards and
+Gaussian REINFORCE, with learning curves and three-seed state-LR replication. See
+[STATE_SCREEN.md](STATE_SCREEN.md), [POLICY_SCREEN.md](POLICY_SCREEN.md) and
+[LEARNING_CURVES.md](LEARNING_CURVES.md) for protocols and raw summaries.
+
+## Roadmap
+
+1. Warm-start pathwise training from the cross-entropy adapter with a KL penalty.
+2. Ablate reward terms and policy-sample counts under a fixed evaluation split.
+3. Add a reserved calibration/source-family split before tuning benchmark settings.
+4. Test a permutation-equivariant or pairwise candidate head.
+5. Submit the locked adapter to the complete JevBench evaluation.
+
+## Documentation map
+
+| Start here | What it covers |
+| --- | --- |
+| [EXPERIMENTS.md](EXPERIMENTS.md) | Reproduction commands and public JevBench comparison |
+| [STATE_SCREEN.md](STATE_SCREEN.md) | State-LR, seed and objective screens |
+| [POLICY_SCREEN.md](POLICY_SCREEN.md) | REINFORCE and pathwise policy experiments |
+| [LEARNING_CURVES.md](LEARNING_CURVES.md) | Extracted loss curves and checkpoint summaries |
+| [RESEARCH.md](RESEARCH.md) | Prior work, model identity and benchmark context |
+| [SOTA.md](SOTA.md) | Ranking claims, limits and next experiments |
 
 ## Architecture
 
